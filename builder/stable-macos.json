@@ -1,7 +1,7 @@
 {
-    "appId": "com.amrpc",
-    "productName": "AMRPC",
-    "artifactName": "AMRPC.${ext}",
+    "appId": "com.amrpc.alpha",
+    "productName": "AMRPC - ALHA",
+    "artifactName": "AMRPC-ALPHA.${ext}",
     "copyright": "Copyright © 2021 N0chteil Productions",
     "asar": "true",
     "asarUnpack": [
@@ -15,7 +15,7 @@
     ],
     "directories": {
         "buildResources": "assets",
-        "output": "app/stable/macos"
+        "output": "app/alpha/macos"
     },
     "dmg": {
 		"window": {
@@ -40,7 +40,7 @@
 	"mac": {
 		"icon": "assets/icons/mac/icon.icns",
 		"target": { "target": "default", "arch": ["x64", "arm64"] },
-		"artifactName": "AMRPC-Installer-macOS-${arch}.${ext}",
+		"artifactName": "AMRPC-ALPHA-Installer-macOS-${arch}.${ext}",
 		"publish": { "provider": "github", "releaseType": "draft" }
 	}
 }

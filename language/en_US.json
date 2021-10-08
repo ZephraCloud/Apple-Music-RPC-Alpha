@@ -10,7 +10,9 @@
         "quit": "Quit"
     },
     "notification": {
-        "coverlistUpdated": "The cover list has been successfully updated."
+        "coverlistUpdated": "The cover list has been successfully updated.",
+        "modallistUpdated": "The modal list has been successfully updated.",
+        "alphaNotAllowed": "You are not allowed to use the alpha version!"
     },
     "settings": {
         "config": {
@@ -61,6 +63,13 @@
                 "buttons": {
                     "downandinst": "Download & install",
                     "download": "Download & install later"
+                }
+            },
+            "alphaVersion": {
+                "title": "Alpha version",
+                "description": "Hello user! We are happy to announce that we have just released our alpha version of AMRPC. For now, we only have a few spots for the alpha version. So be quick if you want to test!",
+                "buttons": {
+                    "register": "Register"
                 }
             },
             "buttons": {

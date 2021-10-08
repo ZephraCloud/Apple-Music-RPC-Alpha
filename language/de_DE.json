@@ -10,7 +10,9 @@
         "quit": "Beenden"
     },
     "notification": {
-        "coverlistUpdated": "Die Cover-Liste wurde erfolgreich aktualisiert."
+        "coverlistUpdated": "Die Cover-Liste wurde erfolgreich aktualisiert.",
+        "modallistUpdated": "Die Modal-Liste wurde erfolgreich aktualisiert.",
+        "alphaNotAllowed": "Du bist nicht berechtigt, die Alpha Version zu nutzen!"
     },
     "settings": {
         "config": {

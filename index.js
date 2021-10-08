@@ -37,7 +37,7 @@ app.dev = (app.isPackaged) ? false : true;
 let rpc = new DiscordRPC.Client({ transport: "ipc" }),
     presenceData = {
         largeImageKey: "applemusic-logo",
-        largeImageText: `${app.dev ? "AMRPC - DEV" : "AMRPC"} - V.${app.getVersion()}`
+        largeImageText: `${app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA"} - V.${app.getVersion()}`
     },
     covers = require("./covers.json"),
     userLang = config.get("language"),
@@ -129,6 +129,7 @@ iTunesEmitter.on("stopped", async () => {
 
 rpc.on("ready", () => {
     disconnected = false;
+    checkAlpha();
     ctG = iTunes.getCurrentTrack();
 
     if(ctG && ctG.playerState === "playing") {
@@ -189,11 +190,11 @@ app.on("ready", () => {
     let tray = new Tray(path.join(app.isPackaged ? process.resourcesPath : __dirname, "/assets/logo.png")),
         isQuiting,
         autoLaunch = new AutoLaunch({
-            name: app.dev ? "AMRPC - DEV" : "AMRPC",
+            name: app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA",
             path: app.getPath("exe")
         }),
         cmenu = Menu.buildFromTemplate([
-            { label: `${app.dev ? "AMRPC - DEV" : "AMRPC"} V${app.getVersion()}`, icon: path.join(app.isPackaged ? process.resourcesPath : __dirname, "/assets/tray/logo@18.png"), enabled: false },
+            { label: `${app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA"} V${app.getVersion()}`, icon: path.join(app.isPackaged ? process.resourcesPath : __dirname, "/assets/tray/logo@18.png"), enabled: false },
             { type: "separator" },
             { label: langString.tray.restart, click() { app.restart() } },
             { label: langString.tray.checkForUpdates, click() { updateChecker() } },
@@ -204,11 +205,9 @@ app.on("ready", () => {
           ]);
 
     app.on("quit", () => tray.destroy());
-    app.on("before-quit", function () {
-        isQuiting = true;
-    });
+    app.on("before-quit", () => isQuiting = true);
 
-    tray.setToolTip(app.dev ? "AMRPC - DEV" : "AMRPC");
+    tray.setToolTip(app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA");
     tray.setContextMenu(cmenu);
     tray.on("right-click", () => tray.update());
     tray.on("click", () => mainWindow.show());
@@ -285,7 +284,6 @@ app.on("ready", () => {
 
     setInterval(() => {
         updateChecker();
-        languageChecker();
     }, 600e3);
 });
 
@@ -322,12 +320,23 @@ function updateChecker() {
             }, 1000);
         } else console.log("No new covers available");
     });
-}
 
-function languageChecker() {
-    console.log("Checking for language changes...");
+    fetch("https://raw.githubusercontent.com/N0chteil-Productions/Apple-Music-RPC/main/modals.json", {cache: "no-store"}, function(error, meta, body) {
+        if(!body) return console.log(`Error ${error}. Modal check was canceled.`);
+        body = body.toString();
 
-    if(config.get("language") !== userLang) userLang = config.get("language");
+        console.log("Checking for new modals...");
+
+        if (require("./modals.js").toString() !== body) {
+            fs.writeFile(path.join(app.isPackaged ? process.resourcesPath + "/app.asar.unpacked" : __dirname, "/modals.js"), body, function (err) {if (err) console.log(err)});
+            console.log("Updated modals");
+            showNotification("AMRPC", langString.notification.modallistUpdated);
+            setTimeout(() => {
+                app.relaunch();
+                app.exit();
+            }, 1000);
+        } else console.log("No new modals available");
+    });
 }
 
 function showNotification(title, body) {
@@ -353,7 +362,7 @@ function reGetCT(type) {
     console.log("currentTrack.album", ct.album);
     console.log("timestamp", Math.floor(Date.now() / 1000) - ct.elapsedTime + ct.duration);
 
-    getAppleMusicData(currentTrack.name, currentTrack.artist, function(res, err) {
+    getAppleMusicData(ct.name, ct.artist, function(res, err) {
         if (!err) {
             console.log("currentTrack url", res.url);
             presenceData.buttons = [
@@ -483,6 +492,41 @@ function startCheckInterval() {
             rpc.setActivity(presenceData);
         }, 15);
     }
+}
+
+function checkAlpha() {
+    let timeout = 0;
+
+    if(!rpc.user) timeout = 2000;
+
+    setTimeout(() => {
+        if(!rpc.user) return checkAlpha();
+
+        fetch("https://amrpc.n0chteil.xyz/checkAlpha", {
+            cache: "no-store",
+            headers: {
+                userid: rpc.user.id,
+                key: "UTNbOEM4NjsmLGpXPEsvMldoYX5SfS5IYDhIXUopM3R3M0BMemtaWW4zcFove2hQNCV4ZTNFY0FgTGNNVXpAUXAnWygoU0guOjZmZGtzQFkjPV1oeHVVaFxUPnp4VDlRXlokM21HRX0hOUM8PCt5cj9OYE4zWkN6Z212bSt+ZUYvPUBjLlcmVC5lW3V+XSV4OSNlJFo5P2I1bnp4K3J1I3l+JVJSPSZ3U254WT8mV3E1UnY0VzJfIi9bJ2VVciRHXmNOOG1dY2E5NDJQLnQ9VXs/PngoUCc9ejVARGFAe0soQCdzUkReLHArI1glVlxWPWt1WzwlJWcjezYyUTRFfQ=="
+            }
+        }, function(error, meta, body) {
+            if(!body) return callback(null, true);
+
+            let res = body.toString();
+
+            if(meta.status === 200) {
+                res = JSON.parse(res);
+
+                if(!res) {
+                    disconnected = true;
+                    rpc.destroy();
+                    dialog.showErrorBox("AMRPC Alpha", langString.notification.alphaNotAllowed);
+                    app.exit();
+                } else {
+                    console.log("Alpha authentication successful :D");
+                }
+            }
+        });
+    }, timeout);
 }
 
 app.restart = () => {

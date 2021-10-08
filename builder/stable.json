@@ -1,7 +1,7 @@
 {
-    "appId": "com.amrpc",
-    "productName": "AMRPC",
-    "artifactName": "AMRPC.${ext}",
+    "appId": "com.amrpc.alpha",
+    "productName": "AMRPC - ALPHA",
+    "artifactName": "AMRPC-ALPHA.${ext}",
     "copyright": "Copyright © 2021 N0chteil Productions",
     "asar": "true",
     "asarUnpack": [
@@ -16,7 +16,7 @@
     ],
     "directories": {
         "buildResources": "assets",
-        "output": "app/stable/win"
+        "output": "app/alpha/win"
     },
     "files": [
         "node_modules/",
@@ -34,7 +34,7 @@
     "win": {
         "target": "nsis",
         "icon": "assets/icons/win/icon.ico",
-        "artifactName": "AMRPC-Installer.exe",
+        "artifactName": "AMRPC-ALPHA-Installer.exe",
         "publish": ["github"]
     }
 }
