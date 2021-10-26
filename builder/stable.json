@@ -8,6 +8,7 @@
         "node_modules/itunes-bridge/wscript",
         "node_modules/itunes-bridge/jxa",
         "covers.json",
+        "modals.js",
         "language/"
     ],
     "extraResources": [
