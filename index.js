@@ -598,7 +598,7 @@ function checkAlpha() {
                     dialog.showErrorBox("AMRPC Alpha", langString.notification.alphaNotAllowed);
                     app.exit();
                 } else {
-                    console.log("Alpha authentication successful :D");
+                    logSuccess("API", "Alpha authentication successful");
                 }
             }
         });
