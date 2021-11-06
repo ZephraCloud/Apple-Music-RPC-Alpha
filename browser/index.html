@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <title>AMRPC</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body data-theme="white">
     <div class="control">
         <div class="windowcontrols">
@@ -16,7 +18,7 @@
         </div>
 
         <div class="center">
-            <img id="songlogo" src="assets/logo.png">
+            <img id="songlogo" src="../assets/logo.png">
             <div class="songinfo" style="display: none;">
                 <span id="songname"></span>
                 <span id="songartist"></span>
@@ -31,25 +33,30 @@
                     <input type="checkbox" name="config_autolaunch">
                     <label for="config_autolaunch">Autolaunch</label>
                 </div>
-    
+
                 <div class="setting">
                     <input type="checkbox" name="config_show">
                     <label for="config_show">Show Presence</label>
                 </div>
-    
+
                 <div class="setting">
                     <input type="checkbox" name="config_hideOnPause">
                     <label for="config_hideOnPause">Hide Presence on pause</label>
                 </div>
-    
+
                 <div class="setting">
                     <input type="checkbox" name="config_showAlbumCover">
                     <label for="config_showAlbumCover">Show album art when available</label>
                 </div>
-    
+
                 <div class="setting">
-                    <input type="checkbox" name="config_performanceMode">
+                    <input type="checkbox" name="config_performanceMode" rR="true">
                     <label for="config_performanceMode">Performance Mode</label>
+                </div>
+
+                <div class="setting">
+                    <input type="checkbox" name="config_listenAlong">
+                    <label for="config_listenAlong">Enable listen along</label>
                 </div>
             </div>
 
@@ -63,7 +70,7 @@
                     </select>
                     <label for="config_colorTheme">Preferred color theme</label>
                 </div>
-    
+
                 <div class="setting">
                     <select name="config_language">
                         <option value="en_US">English (US)</option>
@@ -71,12 +78,20 @@
                     </select>
                     <label for="config_language">App language</label>
                 </div>
-    
+
+                <div class="setting">
+                    <select name="config_cover">
+                        <option value="applemusic-logo">Default</option>
+                        <option value="applemusic-logo-rainbow">Rainbow</option>
+                    </select>
+                    <label for="config_cover">RPC logo</label>
+                </div>
+
                 <div class="setting">
                     <input type="text" name="config_rpcDetails">
                     <label for="config_rpcDetails">Presence details</label>
                 </div>
-    
+
                 <div class="setting">
                     <input type="text" name="config_rpcState">
                     <label for="config_rpcState">Presence state</label>
