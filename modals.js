@@ -49,7 +49,7 @@ if(!appData.get("alphaVersionAsked")) {
             events: [
                 {
                     name: "onclick",
-                    value: "appData.set('alphaVersionAsked', true), openUrl('https://amrpc.n0chteil.xyz/alpha'), closeModal(this.parentElement.id)"
+                    value: "appData.set('alphaVersionAsked', true), openUrl('https://amrpc.zephra.cloud/alpha'), closeModal(this.parentElement.id)"
                 }
             ]
         },

@@ -330,11 +330,13 @@ function newModal(title, description, buttons) {
         e.modal.appendChild(ele);
     }
 
-    document.querySelector(".modal a").addEventListener("click", function (e) {
-        e.preventDefault();
-        openUrl(this.href);
-
-        return false;
+    document.querySelectorAll(".modal a").forEach(element => {
+        element.addEventListener("click", function (e) {
+            e.preventDefault();
+            openUrl(element.href);
+    
+            return false;
+        });
     });
 
     if (e.body.classList.contains("modalIsOpen")) e.modal.style.display = "none", e.modal.classList.add("awaiting");
@@ -367,7 +369,7 @@ function deleteModal(id) {
 function sendUserCount() {
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "https://amrpc.n0chteil.xyz/userCount.php", true);
+    xhr.open("POST", "https://amrpc.zephra.cloud/userCount.php", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
 }

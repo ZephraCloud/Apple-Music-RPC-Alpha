@@ -578,7 +578,7 @@ function checkAlpha() {
     setTimeout(() => {
         if(!rpc.user) return checkAlpha();
 
-        fetch("https://amrpc.n0chteil.xyz/checkAlpha", {
+        fetch("https://amrpc.zephra.cloud/checkAlpha", {
             cache: "no-store",
             headers: {
                 userid: rpc.user.id,
