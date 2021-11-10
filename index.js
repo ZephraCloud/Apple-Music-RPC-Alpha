@@ -38,7 +38,7 @@ DiscordRPC.register(clientId);
 let rpc = new DiscordRPC.Client({ transport: "ipc" }),
     presenceData = {
         largeImageKey: config.get("cover"),
-        largeImageText: `${app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA"} - V.${app.getVersion()}`,
+        largeImageText: `${app.dev ? "AMRPC - DEV" : "AMRPC - ALPHA"} - V.${app.getVersion()}`,
         isLive: false,
         isReady: false
     },
@@ -185,6 +185,8 @@ rpc.on("ready", () => {
     presenceData.isLive = false;
     ctG = iTunes.getCurrentTrack();
 
+    checkAlpha();
+
     console.log("Connected user:", rpc.user.username);
 
     if (ctG && ctG.playerState === "playing") {
@@ -255,7 +257,7 @@ app.on("ready", () => {
             path: app.getPath("exe")
         }),
         cmenu = Menu.buildFromTemplate([
-            { label: `${app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA"} V${app.getVersion()}`, icon: path.join(app.isPackaged ? process.resourcesPath : __dirname, "/assets/tray/logo@18.png"), enabled: false },
+            { label: `${app.dev ? "AMRPC - DEV" : "AMRPC - ALPHA"} V${app.getVersion()}`, icon: path.join(app.isPackaged ? process.resourcesPath : __dirname, "/assets/tray/logo@18.png"), enabled: false },
             { type: "separator" },
             { label: langString.tray.restart, click() { app.restart() } },
             { label: langString.tray.checkForUpdates, click() { updateChecker() } },
@@ -598,7 +600,7 @@ function checkAlpha() {
                     dialog.showErrorBox("AMRPC Alpha", langString.notification.alphaNotAllowed);
                     app.exit();
                 } else {
-                    logSuccess("API", "Alpha authentication successful");
+                    console.log("API", "Alpha authentication successful");
                 }
             }
         });
