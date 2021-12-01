@@ -1,16 +1,18 @@
 # Apple Music RPC for Discord
 
 ## Installation
-* Download the [latest release](https://github.com/N0chteil/Apple-Music-RPC/releases/latest)
+* Download the [latest release](https://github.com/ZephraCloud/Apple-Music-RPC-Alpha/releases/latest)
 * Open the **AMRPC-installer.exe** file
 * Done
 
 ## Requirements
-* Windows 10
-* [iTunes for Windows 10](https://www.microsoft.com/p/itunes/9pb2mz1zmb1s?rtc=1&activetab=pivot:overviewtab)
+* Windows 7 or later
+* [iTunes for Windows](https://www.microsoft.com/p/itunes/9pb2mz1zmb1s?rtc=1&activetab=pivot:overviewtab) or [Apple Music Electron](https://github.com/Apple-Music-Electron/Apple-Music-Electron/releases/latest)
+
+[More](https://github.com/ZephraCloud/Apple-Music-RPC/wiki/Installation)
 
 ## You need help?
-* Take a look into [the Wiki](https://github.com/N0chteil-Productions/Apple-Music-RPC/wiki)
+* Take a look into [the Wiki](https://github.com/ZephraCloud/Apple-Music-RPC/wiki)
 * Join [our Discord](https://discord.gg/APDghNfJhQ)
 
 ## Virus?
@@ -23,4 +25,11 @@ This RPC is only for the Windows program. If you use Apple Music in your browser
 * Support for macOS
 
 ## Support
-<a href="https://www.patreon.com/bePatron?u=31820782">![image](https://user-images.githubusercontent.com/53608074/125461244-94dbe2d6-c43c-47f3-b732-ab9edc6b4a23.png)</a>
+<div align="center">
+  <a href="https://www.patreon.com/bePatron?u=31820782"><img src="https://user-images.githubusercontent.com/53608074/125461244-94dbe2d6-c43c-47f3-b732-ab9edc6b4a23.png"/></a>
+</div>
+
+## License
+<div align="center">
+  <a href="https://app.fossa.com/projects/git%2Bgithub.com%2FZephraCloud%2FApple-Music-RPC?ref=badge_large" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FZephraCloud%2FApple-Music-RPC.svg?type=large"/></a>
+</div>

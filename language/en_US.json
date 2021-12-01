@@ -24,7 +24,8 @@
             "colorTheme": "Preferred color theme",
             "language": "App language",
             "rpcDetails": "Presence details",
-            "rpcState": "Presence state"
+            "rpcState": "Presence state",
+            "appleMusicElectron": "Choose your service"
         },
         "extra": {
             "github": "View on GitHub",

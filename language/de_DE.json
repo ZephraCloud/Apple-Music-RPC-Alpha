@@ -24,7 +24,8 @@
             "colorTheme": "Bevorzugtes Farbschema",
             "language": "App-Sprache",
             "rpcDetails": "Presence Details",
-            "rpcState": "Presence State"
+            "rpcState": "Presence State",
+            "appleMusicElectron": "Wähle deinen Dienst"
         },
         "extra": {
             "github": "Auf GitHub ansehen",

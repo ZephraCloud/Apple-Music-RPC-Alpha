@@ -6,26 +6,7 @@ const iTunes = require("itunes-bridge"),
     path = require("path"),
     fetch = require("fetch").fetchUrl,
     config = new Store({}),
-    appData = new Store({
-        name: "data", defaults: {
-            userCountUsageAsked: false,
-            nineelevenAsked: false,
-            appleEventAsked: false,
-            nineelevenCovers: false,
-            changelog: {
-                "2.2.9": false,
-                "2.2.10": false,
-                "2.2.11": false,
-                "2.3.0": false,
-                "2.3.1": false
-            },
-            zephra: {
-                userId: false,
-                userAuth: false,
-                lastAuth: false
-            }
-        }
-    }),
+    appData = new Store({name: "data"}),
     song = {
         name: document.querySelector("#songname"),
         artist: document.querySelector("#songartist"),
@@ -95,12 +76,21 @@ ipcRenderer.on('asynchronous-message', function (evt, o) {
         document.querySelector("span#download-progress progress").value = o.data.percent;
     } else if (o.type === "sendCover") {
         if (ctG.playerState !== "stopped" && o.data.element) {
-            fetch("https://discord.com/api/oauth2/applications/842112189618978897/assets", function (error, meta, body) {
-                if (!body || error) return console.log(`Error ${error}. Can't access Discord API`);
-                body = JSON.parse(body.toString());
+            const appDataEle = appData.get("discordImg").find(ele => ele.name === o.data.element);
 
-                document.getElementById("songlogo").src = `https://cdn.discordapp.com/app-assets/842112189618978897/${body.find(ele => ele.name === o.data.element).id}.png`;
-            });
+            if (appDataEle)
+                document.getElementById("songlogo").src = `https://cdn.discordapp.com/app-assets/842112189618978897/${appDataEle.id}.png`;
+            else {
+                fetch("https://discord.com/api/oauth2/applications/842112189618978897/assets", function (error, meta, body) {
+                    if (!body || error) return console.log(`Error ${error}. Can't access Discord API`);
+                    body = JSON.parse(body.toString());
+                    let aD = appData.get("discordImg");
+
+                    document.getElementById("songlogo").src = `https://cdn.discordapp.com/app-assets/842112189618978897/${body.find(ele => ele.name === o.data.element).id}.png`;
+                    aD = body;
+                    appData.set("discordImg", aD);
+                });
+            }
         }
     }
 });
@@ -159,7 +149,7 @@ if (!appData.get("changelog")[app.getVersion()]) {
                 }
             ]);
         } else
-            updateDataChangelog(app.getVersion(), true);
+            updateDataChangelog(app.getVersion(), false);
     });
     
 }
@@ -198,7 +188,7 @@ document.querySelector("span.dot.maximize")?.addEventListener("click", function 
 });
 
 document.querySelector("span.dot.close")?.addEventListener("click", function (e) {
-    BrowserWindow.getFocusedWindow().close();
+    BrowserWindow.getFocusedWindow().hide();
 });
 
 document.querySelectorAll("div.setting input").forEach((input) => {
@@ -232,8 +222,14 @@ document.querySelectorAll("div.setting input").forEach((input) => {
 
 document.querySelectorAll("div.setting select").forEach((select) => {
     select.addEventListener('change', (e) => {
-        config.set(select.name.replace("config_", ""), select.value);
-        console.log(select.name.replace("config_", ""), select.value)
+        config.set(select.name.replace("config_", ""), (select.value === "true" || select.value === "false") ? (select.value === "true") ? true : false : select.value);
+        console.log(select.name.replace("config_", ""), select.value);
+
+        if (select.getAttribute("rR") === "true") {
+            document.querySelector("span#restartApp").style["display"] = "inline";
+            document.querySelector("span#reloadPage").style["display"] = "none";
+        }
+
         if (select.name === "config_colorTheme") updateTheme();
         else if (select.name === "config_language") updateLanguage();
     });
