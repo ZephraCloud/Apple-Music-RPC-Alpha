@@ -63,8 +63,8 @@ module.exports = {
         });
     },
 
-    updateActivity: (type, currentTrack, appType) => {
-        console.log("[DiscordRPC] Update Activity");
+    updateActivity: (type, currentTrack, appType, log=true) => {
+        if (log) console.log("[DiscordRPC] Update Activity");
         app.discord.presenceData.isLive = false;
 
         if (currentTrack.album.length === 0) app.discord.presenceData.details = currentTrack.name;
@@ -103,22 +103,24 @@ module.exports = {
                 if (app.discord.presenceData.isReady) app.discord.client.setActivity(app.discord.presenceData);
             } else if (app.discord.presenceData.buttons) delete app.discord.presenceData.buttons;
     
-            console.log("currentTrack", {
-                action: "playing",
-                type: type,
-                name: currentTrack.name,
-                artist: currentTrack.artist,
-                album: currentTrack.album,
-                timestamp: currentTrack.endTime,
-                url: (!err) ? res.url : "not found"
-            });
+            if (log) {
+                console.log("currentTrack", {
+                    action: "playing",
+                    type: type,
+                    name: currentTrack.name,
+                    artist: currentTrack.artist,
+                    album: currentTrack.album,
+                    timestamp: currentTrack.endTime,
+                    url: (!err) ? res.url : "not found"
+                });
+            }
         });
 
         if (!app.discord.disconnected && app.discord.client) app.discord.client.setActivity(app.discord.presenceData);
     },
 
-    clearActivity: (remove) => {
-        console.log("[DiscordRPC] Clear Activity");
+    clearActivity: (remove=true, log=true) => {
+        if (log) console.log("[DiscordRPC] Clear Activity");
 
         if (remove) {
             delete app.discord.presenceData.details;

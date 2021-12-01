@@ -13,11 +13,11 @@ const requestListener = function (req, res) {
         res.end("req", req);
 
         if (req.headers["ame-track"]) {
-            console.log("[AME Server] Received data");
+            if (!req.headers["ame-track-type"]) console.log("[AME Server] Received data");
 
             const track = JSON.parse(req.headers["ame-track"]);
 
-            if (track.type === "paused") clearActivity();
+            if (track.type === "paused") clearActivity(true, (!req.headers["ame-track-type"]));
             else if (track.type === "playing") {
                 updateActivity(track.type, {
                     name: track.name,
@@ -25,7 +25,7 @@ const requestListener = function (req, res) {
                     album: track.album,
                     duration: track.duration,
                     endTime: track.endTime
-                }, "ame");
+                }, "ame", (!req.headers["ame-track-type"]));
             }
         }
     },

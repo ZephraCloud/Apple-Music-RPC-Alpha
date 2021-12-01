@@ -1,8 +1,8 @@
 {
-    "appId": "com.amrpc.alpha",
+    "appId": "com.amrpc",
     "productName": "AMRPC - ALPHA",
     "artifactName": "AMRPC-ALPHA.${ext}",
-    "copyright": "Copyright © 2021 N0chteil Productions",
+    "copyright": "Copyright © 2021 zephra",
     "asar": "true",
     "asarUnpack": [
         "node_modules/itunes-bridge/wscript",
@@ -23,6 +23,8 @@
         "node_modules/",
         "language/",
         "assets/",
+        "browser/",
+        "managers/",
         "*.js",
         "*.html",
         "*.css",
@@ -36,6 +38,9 @@
         "target": "nsis",
         "icon": "assets/icons/win/icon.ico",
         "artifactName": "AMRPC-ALPHA-Installer.exe",
-        "publish": ["github"]
+        "publisherName": "zephra",
+        "publish": [
+            "github"
+        ]
     }
 }

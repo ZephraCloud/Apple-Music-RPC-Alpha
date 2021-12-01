@@ -1,11 +1,6 @@
 const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = require("electron"),
     Store = require("electron-store"),
-    { autoUpdater } = require("electron-updater"),
-    path = require("path"),
     log = require("electron-log"),
-    url = require("url"),
-    fetch = require("fetch").fetchUrl,
-    fs = require("fs"),
     { logInfo, logSuccess, logError } = require("./managers/log");
 
 const config = new Store({

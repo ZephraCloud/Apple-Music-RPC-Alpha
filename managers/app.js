@@ -4,6 +4,8 @@ const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = requir
     path = require("path"),
     { autoUpdater } = require("electron-updater"),
     AutoLaunch = require("auto-launch"),
+    fetch = require("fetch").fetchUrl,
+    fs = require("fs"),
     { connect } = require("../managers/discord.js");
 
 let langString = require(`../language/${config.get("language")}.json`);
@@ -122,30 +124,30 @@ app.on("ready", () => {
 });
 
 app.checkForUpdates = () => {
-    console.log("Checking for updates...");
+    // console.log("Checking for updates...");
 
-    autoUpdater.checkForUpdatesAndNotify();
+    // autoUpdater.checkForUpdatesAndNotify();
 
-    if (!app.isPackaged) return;
+    // if (!app.isPackaged) return;
 
-    fetch("https://raw.githubusercontent.com/ZephraCloud/Apple-Music-RPC/main/covers.json", { cache: "no-store" }, function (error, meta, body) {
-        if (!body) return console.log(`Error ${error}. Cover check was canceled.`);
-        body = JSON.parse(body.toString());
+    // fetch("https://raw.githubusercontent.com/ZephraCloud/Apple-Music-RPC/main/covers.json", { cache: "no-store" }, function (error, meta, body) {
+    //     if (!body) return console.log(`Error ${error}. Cover check was canceled.`);
+    //     body = JSON.parse(body.toString());
 
-        console.log("Checking for new covers...");
+    //     console.log("Checking for new covers...");
 
-        if (!isEqual(require("../covers.json"), body)) {
-            fs.writeFile(path.join(app.isPackaged ? process.resourcesPath + "/app.asar.unpacked" : __dirname + "/..", "/covers.json"), JSON.stringify(body, null, 4), function (err) { if (err) console.log(err) });
-            console.log("Updated covers");
+    //     if (!isEqual(require("../covers.json"), body)) {
+    //         fs.writeFile(path.join(app.isPackaged ? process.resourcesPath + "/app.asar.unpacked" : __dirname + "/..", "/covers.json"), JSON.stringify(body, null, 4), function (err) { if (err) console.log(err) });
+    //         console.log("Updated covers");
 
-            app.showNotification("AMRPC", langString.notification.coverlistUpdated);
+    //         app.showNotification("AMRPC", langString.notification.coverlistUpdated);
 
-            setTimeout(() => {
-                app.relaunch();
-                app.exit();
-            }, 1000);
-        } else console.log("No new covers available");
-    });
+    //         setTimeout(() => {
+    //             app.relaunch();
+    //             app.exit();
+    //         }, 1000);
+    //     } else console.log("No new covers available");
+    // });
 }
 
 app.sendToMainWindow = (t, v) => {
