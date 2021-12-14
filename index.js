@@ -44,7 +44,7 @@ let covers = require("./covers.json"),
 require("child_process").exec("NET SESSION", function (err, so, se) {
     if (se.length === 0) {
         app.isQuiting = true;
-        console.log("Please do not run AMRPC with administrator privileges!");
+        console.log("[Error] Please do not run AMRPC with administrator privileges!");
         dialog.showErrorBox("Oh no!", langString.error.admin);
         app.quit();
     }
@@ -55,7 +55,7 @@ require("./managers/discord.js");
 require(`./managers/${config.get("appleMusicElectron") ? "ame" : "itunes"}.js`);
 
 ipcMain.on("language-change", (e, d) => {
-    console.log(`Changed backend language to ${d.lang}`);
+    console.log(`[Backend] Changed language to ${d.lang}`);
     userLang = d.lang;
     langString = require(`./language/${userLang}.json`);
 });
