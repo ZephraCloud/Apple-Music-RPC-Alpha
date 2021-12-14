@@ -1,10 +1,11 @@
 const DiscordRPC = require("discord-rpc"),
     Store = require("electron-store"),
     config = new Store({}),
-    { app } = require("electron"),
+    { app, dialog } = require("electron"),
     appData = new Store({name: "data"}),
     covers = require("../covers.json"),
-    fetch = require("fetch").fetchUrl;
+    fetch = require("fetch").fetchUrl,
+    langString = require(`../language/${config.get("language")}.json`);
 
 app.discord = {
     client: undefined,
@@ -15,7 +16,7 @@ app.discord = {
 
 module.exports = {
     connect: () => {
-        console.log("[DiscordRPC] Conecting...");
+        console.log("[DiscordRPC] Connecting...");
 
         if (app.discord) app.discord = {};
 
@@ -32,6 +33,12 @@ module.exports = {
             isLive: false,
             isReady: false
         };
+
+        // if (config.get("listenAlong")) {
+        //     app.discord.presenceData.partySize = 1;
+        //     app.discord.presenceData.partyMax = 5;
+        //     app.discord.presenceData.joinSecret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        // }
 
         client.on("ready", () => {
             app.discord.presenceData.isReady = true;
@@ -60,6 +67,13 @@ module.exports = {
 
             //     if (app.discord.presenceData.isReady) this.rpc.setActivity(this.presenceData);
             // }
+
+            app.on("before-quit", () => {
+                module.exports.clearActivity();
+                app.discord.client.destroy();
+
+                app.discord.disconnected = true;
+            });
         });
     },
 
@@ -116,7 +130,13 @@ module.exports = {
             }
         });
 
-        if (!app.discord.disconnected && app.discord.client) app.discord.client.setActivity(app.discord.presenceData);
+        if (!app.discord.disconnected && app.discord.client) {
+            app.discord.client.setActivity(app.discord.presenceData);
+
+            setTimeout(() => {
+                if (!app.discord.disconnected && app.discord.client) app.discord.client.setActivity(app.discord.presenceData);
+            }, 1500);
+        }
     },
 
     clearActivity: (remove=true, log=true) => {
