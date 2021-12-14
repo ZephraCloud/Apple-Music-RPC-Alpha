@@ -19,6 +19,13 @@ iTunesEmitter.on("paused", (type, currentTrack) => {
     clearActivity();
 });
 
+iTunesEmitter.on("timeChange", (type, currentTrack) => {
+    console.log("[iTunes] Time change");
+    if (!currentTrack) return console.log("[iTunes] No Track detected");
+
+    updateActivity(type, currentTrack, "iTunes");
+});
+
 iTunesEmitter.on("stopped", () => {
     console.log("[iTunes] Stopped");
     clearActivity(true);
