@@ -1,5 +1,3 @@
-const { clear } = require("console");
-
 const Store = require("electron-store"),
     { connect, updateActivity, clearActivity } = require("../managers/discord.js"),
     config = new Store({}),
@@ -13,11 +11,11 @@ const requestListener = function (req, res) {
         res.end("req", req);
 
         if (req.headers["ame-track"]) {
-            if (!req.headers["ame-track-type"]) console.log("[AME Server] Received data");
+            if (req.headers["ame-log"]) console.log("[AME Server] Received data");
 
-            const track = JSON.parse(req.headers["ame-track"]);
+            const track = JSON.parse(decodeURI(req.headers["ame-track"]));
 
-            if (track.type === "paused") clearActivity(true, (!req.headers["ame-track-type"]));
+            if (track.type === "paused") clearActivity(true, req.headers["ame-log"]);
             else if (track.type === "playing") {
                 updateActivity(track.type, {
                     name: track.name,
@@ -25,7 +23,7 @@ const requestListener = function (req, res) {
                     album: track.album,
                     duration: track.duration,
                     endTime: track.endTime
-                }, "ame", (!req.headers["ame-track-type"]));
+                }, "ame", req.headers["ame-log"]);
             }
         }
     },
