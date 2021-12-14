@@ -1,6 +1,4 @@
-const iTunes = require("itunes-bridge"),
-    iTunesEmitter = iTunes.emitter,
-    { ipcRenderer } = require('electron'),
+const { ipcRenderer } = require('electron'),
     { BrowserWindow, nativeTheme, Notification, app } = require('@electron/remote'),
     Store = require("electron-store"),
     path = require("path"),
@@ -19,12 +17,12 @@ let langString = require(`../language/${config.get("language")}.json`),
 
 app.dev = (app.isPackaged) ? false : true;
 
-document.querySelector("img#songlogo").src = path.join(app.isPackaged ? process.resourcesPath : __dirname, "../assets/logo.png");
+document.querySelector("img#songlogo").src = path.join(app.isPackaged ? process.resourcesPath : `${__dirname}/..`, "/assets/logo.png");
 document.querySelector("span#extra_version").textContent = `${app.dev ? "Developer" : ""} V.${app.getVersion()}`;
 updateTheme();
 updateLanguage();
 
-ipcRenderer.on('asynchronous-message', function (evt, o) {
+ipcRenderer.on("asynchronous-message", function (evt, o) {
     if (o.type === "new-update-available") {
         newModal(langString.settings.modal["newUpdate"].title, langString.settings.modal["newUpdate"].description.replace("%version%", o.data.version), [
             {
@@ -153,31 +151,6 @@ if (!appData.get("changelog")[app.getVersion()]) {
     });
     
 }
-
-iTunesEmitter.on("playing", async function (type, currentTrack) {
-    ctG = currentTrack;
-    song.name.textContent = (currentTrack.name.length > 40) ? currentTrack.name.substring(0, 40) + "..." : currentTrack.name;
-    song.artist.textContent = (currentTrack.artist.length > 40) ? currentTrack.artist.substring(0, 40) + "..." : currentTrack.artist;
-    song.info.style.display = "block";
-
-    ipcRenderer.send('getCover', {});
-});
-
-iTunesEmitter.on("paused", async function (type, currentTrack) {
-    ctG = currentTrack;
-    song.name.textContent = "";
-    song.artist.textContent = "";
-    song.info.style.display = "none";
-    document.getElementById("songlogo").src = "../assets/logo.png";
-});
-
-iTunesEmitter.on("stopped", async function (type, currentTrack) {
-    ctG = currentTrack;
-    song.name.textContent = "";
-    song.artist.textContent = "";
-    song.info.style.display = "none";
-    document.getElementById("songlogo").src = "../assets/logo.png";
-});
 
 document.querySelector("span.dot.minimize")?.addEventListener("click", function (e) {
     BrowserWindow.getFocusedWindow().minimize();
