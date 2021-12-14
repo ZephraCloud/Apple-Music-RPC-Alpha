@@ -1,6 +1,6 @@
 {
   "name": "apple-music-rpc-alpha",
-  "version": "2.4.0-alpha",
+  "version": "3.0.0-alpha",
   "description": "Discord RPC for Apple Music",
   "main": "index.js",
   "scripts": {
