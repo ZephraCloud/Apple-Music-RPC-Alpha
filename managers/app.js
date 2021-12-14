@@ -56,7 +56,7 @@ app.on("ready", () => {
         resizable: false
     });
 
-    app.mainWindow.loadFile(path.join(app.isPackaged ? process.resourcesPath : __dirname, "/../browser/index.html"));
+    app.mainWindow.loadFile(path.join(app.isPackaged ? process.resourcesPath + "/app.asar/" : __dirname + "/../", "browser/index.html"));
 
     require("@electron/remote/main").initialize();
 
