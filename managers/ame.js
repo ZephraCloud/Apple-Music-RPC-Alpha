@@ -11,6 +11,8 @@ const requestListener = function (req, res) {
         res.end("req", req);
 
         if (req.headers["ame-track"]) {
+            req.headers["ame-log"] = req.headers["ame-log"] === "true" ? true : false;
+
             if (req.headers["ame-log"]) console.log("[AME Server] Received data");
 
             const track = JSON.parse(decodeURI(req.headers["ame-track"]));
