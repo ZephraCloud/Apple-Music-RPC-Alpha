@@ -24,6 +24,7 @@ const requestListener = function (req, res) {
                     artist: track.artist,
                     album: track.album,
                     duration: track.duration,
+                    artwork: track.artwork.replace("{w}", "500").replace("{h}", "500"),
                     endTime: track.endTime
                 }, "ame", req.headers["ame-log"]);
             }

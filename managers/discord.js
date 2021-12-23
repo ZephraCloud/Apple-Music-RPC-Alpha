@@ -102,7 +102,8 @@ module.exports = {
             app.discord.presenceData.isLive = true;
         }
 
-        module.exports.checkCover(currentTrack);
+        if (currentTrack.artwork) app.discord.presenceData.largeImageKey = currentTrack.artwork;
+        else module.exports.checkCover(currentTrack);
 
         module.exports.getAppleMusicData(currentTrack.name, currentTrack.artist, function (res, err) {
             if (!err) {
@@ -121,17 +122,7 @@ module.exports = {
                 if (app.discord.presenceData.isReady) app.discord.client.setActivity(app.discord.presenceData);
             } else if (app.discord.presenceData.buttons) delete app.discord.presenceData.buttons;
     
-            if (log) {
-                console.log("currentTrack", {
-                    action: "playing",
-                    type: type,
-                    name: currentTrack.name,
-                    artist: currentTrack.artist,
-                    album: currentTrack.album,
-                    timestamp: currentTrack.endTime,
-                    url: (!err) ? res.url : "not found"
-                });
-            }
+            if (log) console.log("currentTrack", currentTrack);
         });
 
         if (!app.discord.disconnected && app.discord.client) {
