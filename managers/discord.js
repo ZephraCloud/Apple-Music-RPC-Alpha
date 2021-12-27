@@ -97,7 +97,7 @@ module.exports = {
                 app.discord.presenceData.endTimestamp = Math.floor(Date.now() / 1000) - currentTrack.elapsedTime + currentTrack.duration;
         else {
             if (app.discord.presenceData.endTimestamp) delete app.discord.presenceData.endTimestamp;
-            app.discord.presenceData.details = currentTrack.name;
+            app.discord.presenceData.details = currentTrack.name.substring(0, 128);
             app.discord.presenceData.state = "LIVE";
             app.discord.presenceData.isLive = true;
         }
@@ -161,7 +161,7 @@ module.exports = {
         if (!ct || !cfg || ct.playerState === "stopped" || (cfg !== "rpcDetails" && cfg !== "rpcState")) return;
         if ((!ct.name && config.get(cfg).includes("%title%")) || (!ct.album && config.get(cfg).includes("%album%")) || (!ct.artist && config.get(cfg).includes("%artist%"))) return;
     
-        app.discord.presenceData[(cfg === "rpcDetails") ? "details" : "state"] = config.get(cfg).replace("%title%", ct.name).replace("%album%", ct.album).replace("%artist%", ct.artist);
+        app.discord.presenceData[(cfg === "rpcDetails") ? "details" : "state"] = config.get(cfg).replace("%title%", ct.name).replace("%album%", ct.album).replace("%artist%", ct.artist).substring(0, 128);
     },
 
     checkCover: (ct) => {
