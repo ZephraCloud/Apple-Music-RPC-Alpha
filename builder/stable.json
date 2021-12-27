@@ -11,10 +11,6 @@
         "modals.js",
         "language/"
     ],
-    "extraResources": [
-        "assets/logo.png",
-        "assets/tray/"
-    ],
     "directories": {
         "buildResources": "assets",
         "output": "app/alpha/win"
