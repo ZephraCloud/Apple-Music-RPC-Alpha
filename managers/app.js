@@ -1,6 +1,7 @@
 const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = require("electron"),
     Store = require("electron-store"),
     config = new Store({}),
+    appData = new Store({name: "data"}),
     path = require("path"),
     { autoUpdater } = require("electron-updater"),
     AutoLaunch = require("auto-launch"),
@@ -15,13 +16,13 @@ app.dev = (app.isPackaged) ? false : true;
 app.on("ready", () => {
     console.log("[APP] Starting...");
 
-    let tray = new Tray(path.join(app.isPackaged ? process.resourcesPath : __dirname + "/..", "/assets/logo.png")),
+    let tray = new Tray(path.join(app.getAppPath(), "assets/logo.png")),
         autoLaunch = new AutoLaunch({
             name: app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA",
             path: app.getPath("exe")
         }),
         cmenu = Menu.buildFromTemplate([
-            { label: `${app.dev ? "AMRPC - DEV" : "AMRPC"} V${app.getVersion()}`, icon: path.join(app.isPackaged ? process.resourcesPath : __dirname + "/..", "/assets/tray/logo@18.png"), enabled: false },
+            { label: `${app.dev ? "AMRPC - DEV" : "AMRPC"} V${app.getVersion()}`, icon: path.join(app.getAppPath(), "assets/tray/logo@18.png"), enabled: false },
             { label: (config.get("appleMusicElectron")) ? "Apple Music Electron" : "iTunes", enabled: false },
             { type: "separator" },
             { label: langString.tray.restart, click() { app.restart() } },
@@ -47,16 +48,17 @@ app.on("ready", () => {
 
     app.mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
+            // nodeIntegration: true,
+            // contextIsolation: false,
+            // enableRemoteModule: true
+            preload: path.join(app.getAppPath(), "browser/preload.js")
         },
-        icon: path.join(app.isPackaged ? process.resourcesPath : __dirname  + "/..", "/assets/logo.png"),
+        icon: path.join(app.getAppPath(), "assets/logo.png"),
         frame: false,
         resizable: false
     });
 
-    app.mainWindow.loadFile(path.join(app.isPackaged ? process.resourcesPath + "/app.asar/" : __dirname + "/../", "browser/index.html"));
+    app.mainWindow.loadFile(path.join(app.getAppPath(), "browser/index.html"));
 
     require("@electron/remote/main").initialize();
 
@@ -70,7 +72,7 @@ app.on("ready", () => {
     });
 
     autoUpdater.on("update-available", (info) => {
-        console.log("Update available.");
+        console.log(`[UPDATER] Update available (${info.version})`);
         app.sendToMainWindow("asynchronous-message", {
             "type": "new-update-available",
             "data": {
@@ -81,14 +83,17 @@ app.on("ready", () => {
     });
 
     autoUpdater.on("update-not-available", (info) => {
-        console.log("No updates available");
+        console.log("[UPDATER] No updates available");
     });
 
     autoUpdater.on("error", (err) => {
-        console.log("Error in auto-updater. " + err);
+        console.log(`[UPDATER] Error in auto-updater. ${err}`);
     });
 
     autoUpdater.on("download-progress", (progressObj) => {
+        if (progressObj.percent === 25 || progressObj.percent === 50 || progressObj.percent === 75 || progressObj.percent === 100)
+            console.log(`[UPDATER] Downloading update... (${progressObj.percent}%)`);
+
         app.sendToMainWindow("asynchronous-message", {
             "type": "download-progress-update",
             "data": {
@@ -101,6 +106,8 @@ app.on("ready", () => {
     });
 
     autoUpdater.on("update-downloaded", (info) => {
+        console.log(`[UPDATER] Update downloaded (${info.version})`);
+
         app.sendToMainWindow("asynchronous-message", "Update downloaded");
         autoUpdater.quitAndInstall();
     });
@@ -109,12 +116,32 @@ app.on("ready", () => {
         if (config.get("autolaunch")) autoLaunch.enable();
         else autoLaunch.disable();
 
-        console.log(`Autolaunch is now ${(config.get("autolaunch")) ? "enabled" : "disabled"}`);
+        console.log(`[SETTINGS] Autolaunch is now ${config.get("autolaunch") ? "enabled" : "disabled"}`);
     });
 
+    ipcMain.handle("appVersion", async () => {
+        return app.getVersion();
+    });
+
+    ipcMain.handle("isDeveloper", async () => {
+        return app.dev;
+    });
+
+    ipcMain.handle("getConfig", async (e, k) => {
+        return config.get(k);
+    });
+
+    ipcMain.handle("getAppData", async (e, k) => {
+        return appData.get(k);
+    });
+
+    ipcMain.handle("updateConfig", async (e, k, v) => config.set(k, v));
+
+    ipcMain.handle("updateAppData", async (e, k, v) => appData.set(k, v));
+
     app.mainWindow.hide();
-    connect();
     app.checkForUpdates();
+    connect();
 
     setInterval(() => {
         app.checkForUpdates();
@@ -155,7 +182,7 @@ app.sendToMainWindow = (t, v) => {
 }
 
 app.showNotification = (title, body) => {
-    new Notification({ title: title, body: body, icon: path.join(app.isPackaged ? process.resourcesPath : __dirname + "/..", "/assets/logo.png") }).show();
+    new Notification({ title: title, body: body, icon: path.join(app.getAppPath(), "assets/logo.png") }).show();
 }
 
 app.restart = () => {
@@ -171,9 +198,8 @@ function isEqual(obj1, obj2) {
 
     for (let objKey of obj1Keys) {
         if (obj1[objKey] !== obj2[objKey]) {
-            if (typeof obj1[objKey] == "object" && typeof obj2[objKey] == "object") {
+            if (typeof obj1[objKey] == "object" && typeof obj2[objKey] == "object")
                 if (!isEqual(obj1[objKey], obj2[objKey])) return false;
-            }
             else return false;
         }
     }
