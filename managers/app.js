@@ -60,8 +60,6 @@ app.on("ready", () => {
 
     app.mainWindow.loadFile(path.join(app.getAppPath(), "browser/index.html"));
 
-    require("@electron/remote/main").initialize();
-
     app.mainWindow.on("close", function (event) {
         if (!app.isQuiting) {
             event.preventDefault();
