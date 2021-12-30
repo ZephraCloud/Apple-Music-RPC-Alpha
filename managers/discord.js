@@ -11,7 +11,8 @@ app.discord = {
     client: undefined,
     presenceData: {},
     currentTrack: {},
-    disconnected: false
+    disconnected: false,
+    prevCover: null
 };
 
 module.exports = {
@@ -102,8 +103,27 @@ module.exports = {
             app.discord.presenceData.isLive = true;
         }
 
-        if (currentTrack.artwork) app.discord.presenceData.largeImageKey = currentTrack.artwork;
-        else module.exports.checkCover(currentTrack);
+        if (currentTrack.artwork) {
+            if (!app.discord.prevCover) {
+                app.discord.presenceData.largeImageKey = currentTrack.artwork;
+                app.discord.prevCover = [+Date.now(), currentTrack.artwork]
+            } else if(app.discord.prevCover[1] === currentTrack.artwork)
+                app.discord.presenceData.largeImageKey = app.discord.prevCover[1];
+            else {
+                app.discord.presenceData.largeImageKey = currentTrack.artwork;
+                app.discord.prevCover = [+Date.now(), currentTrack.artwork];
+                // There is currently no information about rate limits from Discord's side
+                // if (app.discord.prevCover[1] !== currentTrack.artwork && Date.now() - app.discord.prevCover[0] > 2500) {
+                //     app.discord.presenceData.largeImageKey = currentTrack.artwork;
+                //     app.discord.prevCover = [+Date.now(), currentTrack.artwork]
+                // } else {
+                //     console.log("[DiscordRPC] Artwork rate limit");
+
+                //     app.discord.presenceData.largeImageKey = "applemusic-logo";
+                // }
+            }
+        } else
+            app.discord.presenceData.largeImageKey = "applemusic-logo";
 
         module.exports.getAppleMusicData(currentTrack.name, currentTrack.artist, function (res, err) {
             if (!err) {
