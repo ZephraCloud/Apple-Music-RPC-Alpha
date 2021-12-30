@@ -51,24 +51,6 @@ module.exports = {
             console.log("[DiscordRPC] Successfully connected");
             console.log("[DiscordRPC] Connected user:", client.user.username);
 
-            // if (app.discord.currentTrack && app.discord.currentTrack.playerState === "playing") {
-            //     if (app.discord.currentTrack.album.length === 0) app.discord.presenceData.details = app.discord.currentTrack.name;
-            //     else replaceRPCVars(app.discord.currentTrack, "rpcDetails");
-        
-            //     replaceRPCVars(app.discord.currentTrack, "rpcState");
-        
-            //     if (app.discord.currentTrack.duration === 0) {
-            //         app.discord.presenceData.details = app.discord.currentTrack.name;
-            //         app.discord.presenceData.state = "LIVE";
-            //         app.discord.presenceData.isLive = true;
-            //     }
-
-            //     checkCover(app.discord.currentTrack);
-            //     updateUserData(app.discord.currentTrack);
-
-            //     if (app.discord.presenceData.isReady) this.rpc.setActivity(this.presenceData);
-            // }
-
             app.on("before-quit", () => {
                 module.exports.clearActivity();
                 app.discord.client.destroy();
@@ -107,9 +89,7 @@ module.exports = {
             if (!app.discord.prevCover) {
                 app.discord.presenceData.largeImageKey = currentTrack.artwork;
                 app.discord.prevCover = [+Date.now(), currentTrack.artwork]
-            } else if(app.discord.prevCover[1] === currentTrack.artwork)
-                app.discord.presenceData.largeImageKey = app.discord.prevCover[1];
-            else {
+            } else if(app.discord.prevCover[1] !== currentTrack.artwork) {
                 app.discord.presenceData.largeImageKey = currentTrack.artwork;
                 app.discord.prevCover = [+Date.now(), currentTrack.artwork];
                 // There is currently no information about rate limits from Discord's side
@@ -122,8 +102,7 @@ module.exports = {
                 //     app.discord.presenceData.largeImageKey = "applemusic-logo";
                 // }
             }
-        } else
-            app.discord.presenceData.largeImageKey = "applemusic-logo";
+        } else checkCover();
 
         module.exports.getAppleMusicData(currentTrack.name, currentTrack.artist, function (res, err) {
             if (!err) {

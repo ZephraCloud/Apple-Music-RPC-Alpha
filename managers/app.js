@@ -143,6 +143,14 @@ app.on("ready", () => {
 
     ipcMain.handle("updateAppData", (e, k, v) => appData.set(k, v));
 
+    ipcMain.handle("windowControl", (e, action) => {
+        if (action === "show") app.mainWindow.show();
+        else if (action === "hide") app.mainWindow.hide();
+        else if (action === "close") app.mainWindow.close();
+        else if (action === "minimize") app.mainWindow.minimize();
+        else if (action === "maximize") app.mainWindow.maximize();
+    });
+
     app.mainWindow.hide();
     app.checkForUpdates();
     connect();
