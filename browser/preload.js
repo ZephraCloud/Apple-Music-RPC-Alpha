@@ -1,4 +1,4 @@
-const { app, contextBridge, ipcRenderer, shell } = require("electron");
+const { app, contextBridge, ipcRenderer, shell, BrowserWindow } = require("electron");
 
 console.log("[BROWSER PRELOAD] Ready");
 
@@ -30,7 +30,7 @@ contextBridge.exposeInMainWorld("electron", {
     },
     updateLanguage: (lang) => ipcRenderer.invoke("updateLanguage", lang),
     openURL: (url) => shell.openExternal(url),
-    minimize: () => app.mainWindow?.minimize(),
-    maximize: () => app.mainWindow?.maximize(),
-    close: () => app.mainWindow?.hide(),
+    minimize: () => ipcRenderer.invoke("windowControl", "minimize"),
+    maximize: () => ipcRenderer.invoke("windowControl", "maximize"),
+    hide: () => ipcRenderer.invoke("windowControl", "hide"),
 });
