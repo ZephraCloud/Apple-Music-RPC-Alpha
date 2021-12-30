@@ -15,7 +15,8 @@
 //  let langString = require(`../language/${config.get("language")}.json`),
     //  ctG;
 
-let appVersion;
+let appVersion,
+    restartRequiredMemory = {};
 
 (async () => {
     appVersion = await window.electron.appVersion();
@@ -159,8 +160,18 @@ document.querySelectorAll("div.setting input").forEach(async (input) => {
 
             if (input.getAttribute("rR") === "true") {
                 updateSCPM();
-                document.querySelector("span#restartApp").style["display"] = "inline";
-                document.querySelector("span#reloadPage").style["display"] = "none";
+
+                if (input.checked === restartRequiredMemory[input.name]) {
+                    delete restartRequiredMemory[input.name];
+
+                    document.querySelector("span#restartApp").style["display"] = "none";
+                    document.querySelector("span#reloadPage").style["display"] = "inline";
+                } else {
+                    restartRequiredMemory[input.name] = !input.checked;
+
+                    document.querySelector("span#restartApp").style["display"] = "inline";
+                    document.querySelector("span#reloadPage").style["display"] = "none";
+                }
             }
             if (input.name === "config_autolaunch") ipcRenderer.send("autolaunch-change", {});
         });
@@ -182,14 +193,24 @@ document.querySelectorAll("div.setting input").forEach(async (input) => {
 });
 
 document.querySelectorAll("div.setting select").forEach(async (select) => {
-    select.addEventListener('change', (e) => {
-        window.electron.config.set(select.name.replace("config_", ""), (select.value === "true" || select.value === "false") ? (select.value === "true") ? true : false : select.value);
+    select.addEventListener('change', async (e) => {
         console.log(select.name.replace("config_", ""), select.value);
 
         if (select.getAttribute("rR") === "true") {
-            document.querySelector("span#restartApp").style["display"] = "inline";
-            document.querySelector("span#reloadPage").style["display"] = "none";
+            if (select.value?.toString() === restartRequiredMemory[select.name]?.toString()) {
+                delete restartRequiredMemory[select.name];
+    
+                document.querySelector("span#restartApp").style["display"] = "none";
+                document.querySelector("span#reloadPage").style["display"] = "inline";
+            } else {
+                restartRequiredMemory[select.name] = await window.electron.config.get(select.name.replace("config_", ""));
+    
+                document.querySelector("span#restartApp").style["display"] = "inline";
+                document.querySelector("span#reloadPage").style["display"] = "none";
+            }
         }
+
+        window.electron.config.set(select.name.replace("config_", ""), (select.value === "true" || select.value === "false") ? (select.value === "true") ? true : false : select.value);
 
         if (select.name === "config_colorTheme") updateTheme();
         else if (select.name === "config_language") updateLanguage();
