@@ -19,7 +19,7 @@
             "autolaunch": "Autostart",
             "show": "Presence anzeigen",
             "hideOnPause": "Presence während Pause ausblenden",
-            "showAlbumCover": "Albumcover anzeigen, wenn verfügbar",
+            "showAlbumCover": "Artwork des Albums anzeigen",
             "performanceMode": "Performance Mode",
             "colorTheme": "Bevorzugtes Farbschema",
             "language": "App-Sprache",
