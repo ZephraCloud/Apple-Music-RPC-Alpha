@@ -52,7 +52,7 @@ require("child_process").exec("NET SESSION", function (err, so, se) {
 
 require("./managers/app.js");
 require("./managers/discord.js");
-require(`./managers/${config.get("appleMusicElectron") ? "ame" : "itunes"}.js`);
+require(`./managers/${config.get("service")}.js`);
 
 ipcMain.on("getCover", (e, d) => {
     if (!app.discord.currentTrack) return;
