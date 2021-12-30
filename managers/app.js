@@ -117,25 +117,31 @@ app.on("ready", () => {
         console.log(`[SETTINGS] Autolaunch is now ${config.get("autolaunch") ? "enabled" : "disabled"}`);
     });
 
-    ipcMain.handle("appVersion", async () => {
+    ipcMain.handle("appVersion", () => {
         return app.getVersion();
     });
 
-    ipcMain.handle("isDeveloper", async () => {
+    ipcMain.handle("isDeveloper", () => {
         return app.dev;
     });
 
-    ipcMain.handle("getConfig", async (e, k) => {
+    ipcMain.handle("getConfig", (e, k) => {
         return config.get(k);
     });
 
-    ipcMain.handle("getAppData", async (e, k) => {
+    ipcMain.handle("getAppData", (e, k) => {
         return appData.get(k);
     });
 
-    ipcMain.handle("updateConfig", async (e, k, v) => config.set(k, v));
+    ipcMain.on("updateLanguage", (e, language) => {
+        console.log(`[Backend] Changed language to ${language}`);
 
-    ipcMain.handle("updateAppData", async (e, k, v) => appData.set(k, v));
+        app.langString = require(`./language/${language}.json`);
+    });
+
+    ipcMain.handle("updateConfig", (e, k, v) => config.set(k, v));
+
+    ipcMain.handle("updateAppData", (e, k, v) => appData.set(k, v));
 
     app.mainWindow.hide();
     app.checkForUpdates();
