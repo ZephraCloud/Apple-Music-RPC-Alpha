@@ -54,12 +54,6 @@ require("./managers/app.js");
 require("./managers/discord.js");
 require(`./managers/${config.get("appleMusicElectron") ? "ame" : "itunes"}.js`);
 
-ipcMain.on("language-change", (e, d) => {
-    console.log(`[Backend] Changed language to ${d.lang}`);
-    userLang = d.lang;
-    langString = require(`./language/${userLang}.json`);
-});
-
 ipcMain.on("getCover", (e, d) => {
     if (!app.discord.currentTrack) return;
 
