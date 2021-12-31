@@ -85,7 +85,7 @@ module.exports = {
             app.discord.presenceData.isLive = true;
         }
 
-        if (currentTrack.artwork) {
+        if (currentTrack.artwork && config.get("showAlbumArtwork")) {
             if (!app.discord.prevCover) {
                 app.discord.presenceData.largeImageKey = currentTrack.artwork;
                 app.discord.prevCover = [+Date.now(), currentTrack.artwork]
@@ -102,7 +102,7 @@ module.exports = {
                 //     app.discord.presenceData.largeImageKey = "applemusic-logo";
                 // }
             }
-        } else checkCover();
+        } else module.exports.checkCover();
 
         module.exports.getAppleMusicData(currentTrack.name, currentTrack.artist, function (res, err) {
             if (!err) {
@@ -165,7 +165,7 @@ module.exports = {
 
     checkCover: (ct) => {
         if (!ct || ct.playerState === "stopped") return;
-        if (!config.get("showAlbumCover")) return app.discord.presenceData.largeImageKey = config.get("cover");
+        if (!config.get("showAlbumArtwork")) return app.discord.presenceData.largeImageKey = config.get("cover");
         if (appData.get("nineelevenCovers") && (new Date().getMonth() + 1 === 9 && new Date().getDate() === 11)) return app.discord.presenceData.largeImageKey = "cover_911";
     
         if (covers.album[ct.album.toLowerCase()]) app.discord.presenceData.largeImageKey = covers.album[ct.album.toLowerCase()];
