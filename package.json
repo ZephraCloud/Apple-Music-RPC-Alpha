@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/ZephraCloud/Apple-Music-RPC-Alpha#readme",
   "dependencies": {
-    "@electron/remote": "^1.2.2",
     "auto-launch": "^5.0.5",
     "discord-rpc": "^4.0.1",
     "electron-log": "^4.4.1",

@@ -1,4 +1,4 @@
-const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = require("electron"),
+const { app, dialog } = require("electron"),
     Store = require("electron-store");
 
 const config = new Store({
