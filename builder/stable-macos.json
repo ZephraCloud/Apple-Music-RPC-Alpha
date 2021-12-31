@@ -1,23 +1,23 @@
 {
-    "appId": "com.amrpc.alpha",
-    "productName": "AMRPC - ALHA",
-    "artifactName": "AMRPC-ALPHA.${ext}",
-    "copyright": "Copyright © 2021 N0chteil Productions",
-    "asar": "true",
-    "asarUnpack": [
-        "node_modules/itunes-bridge/wscript",
-        "node_modules/itunes-bridge/jxa",
-        "covers.json"
-    ],
-    "extraResources": [
-        "assets/logo.png",
-        "assets/tray/"
-    ],
-    "directories": {
-        "buildResources": "assets",
-        "output": "app/alpha/macos"
-    },
-    "dmg": {
+	"appId": "com.amrpc.alpha",
+	"productName": "AMRPC - ALHA",
+	"artifactName": "AMRPC-ALPHA.${ext}",
+	"copyright": "Copyright © 2021 N0chteil Productions",
+	"asar": "true",
+	"asarUnpack": [
+		"node_modules/itunes-bridge/wscript",
+		"node_modules/itunes-bridge/jxa",
+		"covers.json"
+	],
+	"extraResources": [
+		"assets/logo.png",
+		"assets/tray/"
+	],
+	"directories": {
+		"buildResources": "assets",
+		"output": "app/alpha/macos"
+	},
+	"dmg": {
 		"window": {
 			"width": 660,
 			"height": 400
@@ -39,8 +39,17 @@
 	},
 	"mac": {
 		"icon": "assets/icons/mac/icon.icns",
-		"target": { "target": "default", "arch": ["x64", "arm64"] },
+		"target": {
+			"target": "default",
+			"arch": [
+				"x64",
+				"arm64"
+			]
+		},
 		"artifactName": "AMRPC-ALPHA-Installer-macOS-${arch}.${ext}",
-		"publish": { "provider": "github", "releaseType": "draft" }
+		"publish": {
+			"provider": "github",
+			"releaseType": "draft"
+		}
 	}
 }

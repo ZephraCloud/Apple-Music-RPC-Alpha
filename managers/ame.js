@@ -1,7 +1,7 @@
 const Store = require("electron-store"),
-    { connect, updateActivity, clearActivity } = require("../managers/discord.js"),
+    { updateActivity, clearActivity } = require("../managers/discord.js"),
     config = new Store({}),
-    appData = new Store({name: "data"}),
+    appData = new Store({ name: "data" }),
     http = require("http");
 
 const requestListener = function (req, res) {
@@ -11,22 +11,32 @@ const requestListener = function (req, res) {
         res.end("req", req);
 
         if (req.headers["ame-track"]) {
-            req.headers["ame-log"] = req.headers["ame-log"] === "true" ? true : false;
+            req.headers["ame-log"] =
+                req.headers["ame-log"] === "true" ? true : false;
 
-            if (req.headers["ame-log"]) console.log("[AME Server] Received data");
+            if (req.headers["ame-log"])
+                console.log("[AME Server] Received data");
 
             const track = JSON.parse(decodeURI(req.headers["ame-track"]));
 
-            if (track.type === "paused") clearActivity(true, req.headers["ame-log"]);
+            if (track.type === "paused")
+                clearActivity(true, req.headers["ame-log"]);
             else if (track.type === "playing") {
-                updateActivity(track.type, {
-                    name: track.name,
-                    artist: track.artist,
-                    album: track.album,
-                    duration: track.duration,
-                    artwork: track.artwork.replace("{w}", "500").replace("{h}", "500"),
-                    endTime: track.endTime
-                }, "ame", req.headers["ame-log"]);
+                updateActivity(
+                    track.type,
+                    {
+                        name: track.name,
+                        artist: track.artist,
+                        album: track.album,
+                        duration: track.duration,
+                        artwork: track.artwork
+                            .replace("{w}", "500")
+                            .replace("{h}", "500"),
+                        endTime: track.endTime,
+                    },
+                    "ame",
+                    req.headers["ame-log"]
+                );
             }
         }
     },

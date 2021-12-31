@@ -6,24 +6,30 @@ let appVersion,
     const seenChangelogs = await window.electron.appData.get("changelog");
     appVersion = await window.electron.appVersion();
 
-    document.querySelector("span#extra_version").textContent = `${window.electron.isDeveloper() ? "Developer" : ""} V.${appVersion}`;
+    document.querySelector("span#extra_version").textContent = `${
+        window.electron.isDeveloper() ? "Developer" : ""
+    } V.${appVersion}`;
 
     if (!seenChangelogs[appVersion]) {
         const changelog = await window.electron.fetchChangelog();
 
         if (changelog) {
-            newModal(`Changelog ${changelog.name}`, marked.parse(changelog.body.replace("# Changelog:\r\n", "")), [
-                {
-                    text: langString.settings.modal.buttons.okay,
-                    style: "btn-grey",
-                    events: [
-                        {
-                            name: "onclick",
-                            value: "updateDataChangelog(appVersion, true), closeModal(this.parentElement.id)"
-                        }
-                    ]
-                }
-            ]);
+            newModal(
+                `Changelog ${changelog.name}`,
+                marked.parse(changelog.body.replace("# Changelog:\r\n", "")),
+                [
+                    {
+                        text: langString.settings.modal.buttons.okay,
+                        style: "btn-grey",
+                        events: [
+                            {
+                                name: "onclick",
+                                value: "updateDataChangelog(appVersion, true), closeModal(this.parentElement.id)",
+                            },
+                        ],
+                    },
+                ]
+            );
         }
     }
 })();
@@ -86,22 +92,31 @@ updateLanguage();
 //     }
 // });
 
-document.querySelector("span.dot.minimize")?.addEventListener("click", function (e) {
-    window.electron.minimize();
-});
+document
+    .querySelector("span.dot.minimize")
+    ?.addEventListener("click", function (e) {
+        window.electron.minimize();
+    });
 
-document.querySelector("span.dot.maximize")?.addEventListener("click", function (e) {
-    window.electron.maximize();
-});
+document
+    .querySelector("span.dot.maximize")
+    ?.addEventListener("click", function (e) {
+        window.electron.maximize();
+    });
 
-document.querySelector("span.dot.close")?.addEventListener("click", function (e) {
-    window.electron.hide();
-});
+document
+    .querySelector("span.dot.close")
+    ?.addEventListener("click", function (e) {
+        window.electron.hide();
+    });
 
 document.querySelectorAll("div.setting input").forEach(async (input) => {
     if (input.type == "checkbox") {
-        input.addEventListener('click', (e) => {
-            window.electron.config.set(input.name.replace("config_", ""), input.checked);
+        input.addEventListener("click", (e) => {
+            window.electron.config.set(
+                input.name.replace("config_", ""),
+                input.checked
+            );
 
             if (input.getAttribute("rR") === "true") {
                 updateSCPM();
@@ -109,53 +124,84 @@ document.querySelectorAll("div.setting input").forEach(async (input) => {
                 if (input.checked === restartRequiredMemory[input.name]) {
                     delete restartRequiredMemory[input.name];
 
-                    document.querySelector("span#restartApp").style["display"] = "none";
-                    document.querySelector("span#reloadPage").style["display"] = "inline";
+                    document.querySelector("span#restartApp").style["display"] =
+                        "none";
+                    document.querySelector("span#reloadPage").style["display"] =
+                        "inline";
                 } else {
                     restartRequiredMemory[input.name] = !input.checked;
 
-                    document.querySelector("span#restartApp").style["display"] = "inline";
-                    document.querySelector("span#reloadPage").style["display"] = "none";
+                    document.querySelector("span#restartApp").style["display"] =
+                        "inline";
+                    document.querySelector("span#reloadPage").style["display"] =
+                        "none";
                 }
             }
-            if (input.name === "config_autolaunch") ipcRenderer.send("autolaunch-change", {});
+            if (input.name === "config_autolaunch")
+                ipcRenderer.send("autolaunch-change", {});
         });
     } else if (input.type === "text") {
         let timeout;
 
-        input.addEventListener('keyup', function (e) {
+        input.addEventListener("keyup", function (e) {
             clearTimeout(timeout);
 
             timeout = setTimeout(function () {
-                window.electron.config.set(input.name.replace("config_", ""), input.value);
+                window.electron.config.set(
+                    input.name.replace("config_", ""),
+                    input.value
+                );
             }, 1500);
         });
     }
 
-    if (input.type === "checkbox") input.checked = await window.electron.config.get(input.name.replace("config_", ""));
-    else if (input.type === "text") input.value = await window.electron.config.get(input.name.replace("config_", ""));
+    if (input.type === "checkbox")
+        input.checked = await window.electron.config.get(
+            input.name.replace("config_", "")
+        );
+    else if (input.type === "text")
+        input.value = await window.electron.config.get(
+            input.name.replace("config_", "")
+        );
     updateSCPM();
 });
 
 document.querySelectorAll("div.setting select").forEach(async (select) => {
-    select.addEventListener('change', async (e) => {
+    select.addEventListener("change", async (e) => {
         console.log(select.name.replace("config_", ""), select.value);
 
         if (select.getAttribute("rR") === "true") {
-            if (select.value?.toString() === restartRequiredMemory[select.name]?.toString()) {
+            if (
+                select.value?.toString() ===
+                restartRequiredMemory[select.name]?.toString()
+            ) {
                 delete restartRequiredMemory[select.name];
-    
-                document.querySelector("span#restartApp").style["display"] = "none";
-                document.querySelector("span#reloadPage").style["display"] = "inline";
+
+                document.querySelector("span#restartApp").style["display"] =
+                    "none";
+                document.querySelector("span#reloadPage").style["display"] =
+                    "inline";
             } else {
-                restartRequiredMemory[select.name] = await window.electron.config.get(select.name.replace("config_", ""));
-    
-                document.querySelector("span#restartApp").style["display"] = "inline";
-                document.querySelector("span#reloadPage").style["display"] = "none";
+                restartRequiredMemory[select.name] =
+                    await window.electron.config.get(
+                        select.name.replace("config_", "")
+                    );
+
+                document.querySelector("span#restartApp").style["display"] =
+                    "inline";
+                document.querySelector("span#reloadPage").style["display"] =
+                    "none";
             }
         }
 
-        window.electron.config.set(select.name.replace("config_", ""), (select.value === "true" || select.value === "false") ? (select.value === "true") ? true : false : select.value);
+        window.electron.config.set(
+            select.name.replace("config_", ""),
+            select.value === "true" || select.value === "false"
+                ? select.value === "true"
+                    ? true
+                    : false
+                : select.value
+        );
 
         if (select.name === "config_colorTheme") updateTheme();
         else if (select.name === "config_language") updateLanguage();
@@ -163,7 +209,9 @@ document.querySelectorAll("div.setting select").forEach(async (select) => {
         updateSCPM();
     });
 
-    select.value = await window.electron.config.get(select.name.replace("config_", ""));
+    select.value = await window.electron.config.get(
+        select.name.replace("config_", "")
+    );
 });
 
 function openUrl(url) {
@@ -181,11 +229,21 @@ async function updateTheme() {
 
 async function updateSCPM() {
     const e = {
-        performanceMode: document.querySelector("div.setting input[name='config_performanceMode']"),
-        showRPC: document.querySelector("div.setting input[name='config_show']"),
-        hideOnPause: document.querySelector("div.setting input[name='config_hideOnPause']"),
-        service: document.querySelector("div.setting select[name='config_service']"),
-        listenAlong: document.querySelector("div.setting input[name='config_listenAlong']"),
+        performanceMode: document.querySelector(
+            "div.setting input[name='config_performanceMode']"
+        ),
+        showRPC: document.querySelector(
+            "div.setting input[name='config_show']"
+        ),
+        hideOnPause: document.querySelector(
+            "div.setting input[name='config_hideOnPause']"
+        ),
+        service: document.querySelector(
+            "div.setting select[name='config_service']"
+        ),
+        listenAlong: document.querySelector(
+            "div.setting input[name='config_listenAlong']"
+        ),
     };
 
     if (e.performanceMode.checked) {
@@ -193,7 +251,8 @@ async function updateSCPM() {
         e.hideOnPause.checked = true;
         e.hideOnPause.disabled = true;
     } else {
-        if (await window.electron.config.get("show")) e.showRPC.disabled = false;
+        if (await window.electron.config.get("show"))
+            e.showRPC.disabled = false;
         e.hideOnPause.disabled = false;
     }
 
@@ -213,15 +272,18 @@ async function updateLanguage() {
     //window.electron.updateLanguage(language);
 
     document.querySelectorAll("div.setting label").forEach((ele) => {
-        const ls = langString.settings.config[ele.getAttribute("for").replace("config_", "")];
+        const ls =
+            langString.settings.config[
+                ele.getAttribute("for").replace("config_", "")
+            ];
 
-        if (ls) ele.textContent = ls
+        if (ls) ele.textContent = ls;
     });
 
     document.querySelectorAll(".extra span").forEach((ele) => {
         const ls = langString.settings.extra[ele.parentElement.id];
 
-        if (ls) ele.textContent = ls
+        if (ls) ele.textContent = ls;
     });
 }
 
@@ -230,8 +292,8 @@ function newModal(title, description, buttons) {
         modal: document.createElement("div"),
         title: document.createElement("h1"),
         description: document.createElement("p"),
-        body: document.body
-    }
+        body: document.body,
+    };
 
     e.body.appendChild(e.modal);
     e.modal.appendChild(e.title);
@@ -267,16 +329,17 @@ function newModal(title, description, buttons) {
         e.modal.appendChild(ele);
     }
 
-    document.querySelectorAll(".modal a").forEach(element => {
+    document.querySelectorAll(".modal a").forEach((element) => {
         element.addEventListener("click", function (e) {
             e.preventDefault();
             openUrl(element.href);
-    
+
             return false;
         });
     });
 
-    if (e.body.classList.contains("modalIsOpen")) e.modal.style.display = "none", e.modal.classList.add("awaiting");
+    if (e.body.classList.contains("modalIsOpen"))
+        (e.modal.style.display = "none"), e.modal.classList.add("awaiting");
     else e.body.classList.add("modalIsOpen");
 }
 
@@ -285,7 +348,8 @@ function closeModal(id) {
     e.style.display = "none";
     document.body.classList.remove("modalIsOpen");
 
-    if (document.querySelectorAll("div.modal.awaiting").length > 0) openModal(document.querySelectorAll("div.modal.awaiting")[0].id);
+    if (document.querySelectorAll("div.modal.awaiting").length > 0)
+        openModal(document.querySelectorAll("div.modal.awaiting")[0].id);
 }
 
 function openModal(id) {
@@ -300,22 +364,26 @@ function deleteModal(id) {
     e.remove();
     document.body.classList.remove("modalIsOpen");
 
-    if (document.querySelectorAll("div.modal.awaiting").length > 0) openModal(document.querySelectorAll("div.modal.awaiting")[0].id);
+    if (document.querySelectorAll("div.modal.awaiting").length > 0)
+        openModal(document.querySelectorAll("div.modal.awaiting")[0].id);
 }
 
 function sendUserCount() {
     const xhr = new XMLHttpRequest();
 
     xhr.open("POST", "https://amrpc.zephra.cloud/userCount.php", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send();
 }
 
 function generateEleId() {
-    let result = '',
-        characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let result = "",
+        characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    for (let i = 0; i < characters.length; i++) result += characters.charAt(Math.floor(Math.random() * characters.length));
+    for (let i = 0; i < characters.length; i++)
+        result += characters.charAt(
+            Math.floor(Math.random() * characters.length)
+        );
 
     return result;
 }

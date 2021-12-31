@@ -1,7 +1,16 @@
-const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog, nativeTheme } = require("electron"),
+const {
+        ipcMain,
+        app,
+        Menu,
+        Notification,
+        Tray,
+        BrowserWindow,
+        dialog,
+        nativeTheme,
+    } = require("electron"),
     Store = require("electron-store"),
     config = new Store({}),
-    appData = new Store({name: "data"}),
+    appData = new Store({ name: "data" }),
     path = require("path"),
     { autoUpdater } = require("electron-updater"),
     AutoLaunch = require("auto-launch"),
@@ -12,7 +21,7 @@ const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog, nativeThe
 
 let langString = require(`../language/${config.get("language")}.json`);
 
-app.dev = (app.isPackaged) ? false : true;
+app.dev = app.isPackaged ? false : true;
 app.addLog = log.log;
 console.log = app.addLog;
 
@@ -22,18 +31,49 @@ app.on("ready", () => {
     let tray = new Tray(path.join(app.getAppPath(), "assets/logo.png")),
         autoLaunch = new AutoLaunch({
             name: app.dev ? "AMRPC - ALPHA - DEV" : "AMRPC - ALPHA",
-            path: app.getPath("exe")
+            path: app.getPath("exe"),
         }),
         cmenu = Menu.buildFromTemplate([
-            { label: `${app.dev ? "AMRPC - DEV" : "AMRPC"} V${app.getVersion()}`, icon: path.join(app.getAppPath(), "assets/tray/logo@18.png"), enabled: false },
-            { label: (config.get("appleMusicElectron")) ? "Apple Music Electron" : "iTunes", enabled: false },
+            {
+                label: `${
+                    app.dev ? "AMRPC - DEV" : "AMRPC"
+                } V${app.getVersion()}`,
+                icon: path.join(app.getAppPath(), "assets/tray/logo@18.png"),
+                enabled: false,
+            },
+            {
+                label: config.get("appleMusicElectron")
+                    ? "Apple Music Electron"
+                    : "iTunes",
+                enabled: false,
+            },
             { type: "separator" },
-            { label: langString.tray.restart, click() { app.restart() } },
-            { label: langString.tray.checkForUpdates, click() { app.checkForUpdates() } },
+            {
+                label: langString.tray.restart,
+                click() {
+                    app.restart();
+                },
+            },
+            {
+                label: langString.tray.checkForUpdates,
+                click() {
+                    app.checkForUpdates();
+                },
+            },
             { type: "separator" },
-            { label: langString.tray.openSettings, click() { app.mainWindow.show() } },
+            {
+                label: langString.tray.openSettings,
+                click() {
+                    app.mainWindow.show();
+                },
+            },
             { type: "separator" },
-            { label: langString.tray.quit, click() { app.isQuiting = true, app.quit() } }
+            {
+                label: langString.tray.quit,
+                click() {
+                    (app.isQuiting = true), app.quit();
+                },
+            },
         ]);
 
     app.on("quit", () => tray.destroy());
@@ -54,11 +94,11 @@ app.on("ready", () => {
             // nodeIntegration: true,
             // contextIsolation: false,
             // enableRemoteModule: true
-            preload: path.join(app.getAppPath(), "browser/preload.js")
+            preload: path.join(app.getAppPath(), "browser/preload.js"),
         },
         icon: path.join(app.getAppPath(), "assets/logo.png"),
         frame: false,
-        resizable: false
+        resizable: false,
     });
 
     app.mainWindow.loadFile(path.join(app.getAppPath(), "browser/index.html"));
@@ -75,10 +115,10 @@ app.on("ready", () => {
     autoUpdater.on("update-available", (info) => {
         console.log(`[UPDATER] Update available (${info.version})`);
         app.sendToMainWindow("asynchronous-message", {
-            "type": "new-update-available",
-            "data": {
-                "version": info.version
-            }
+            type: "new-update-available",
+            data: {
+                version: info.version,
+            },
         });
         //autoUpdater.downloadUpdate();
     });
@@ -92,17 +132,24 @@ app.on("ready", () => {
     });
 
     autoUpdater.on("download-progress", (progressObj) => {
-        if (progressObj.percent === 25 || progressObj.percent === 50 || progressObj.percent === 75 || progressObj.percent === 100)
-            console.log(`[UPDATER] Downloading update... (${progressObj.percent}%)`);
+        if (
+            progressObj.percent === 25 ||
+            progressObj.percent === 50 ||
+            progressObj.percent === 75 ||
+            progressObj.percent === 100
+        )
+            console.log(
+                `[UPDATER] Downloading update... (${progressObj.percent}%)`
+            );
 
         app.sendToMainWindow("asynchronous-message", {
-            "type": "download-progress-update",
-            "data": {
-                "percent": progressObj.percent,
-                "transferred": progressObj.transferred,
-                "total": progressObj.total,
-                "speed": progressObj.bytesPerSecond
-            }
+            type: "download-progress-update",
+            data: {
+                percent: progressObj.percent,
+                transferred: progressObj.transferred,
+                total: progressObj.total,
+                speed: progressObj.bytesPerSecond,
+            },
         });
     });
 
@@ -117,7 +164,11 @@ app.on("ready", () => {
         if (config.get("autolaunch")) autoLaunch.enable();
         else autoLaunch.disable();
 
-        console.log(`[SETTINGS] Autolaunch is now ${config.get("autolaunch") ? "enabled" : "disabled"}`);
+        console.log(
+            `[SETTINGS] Autolaunch is now ${
+                config.get("autolaunch") ? "enabled" : "disabled"
+            }`
+        );
     });
 
     ipcMain.handle("appVersion", () => {
@@ -176,40 +227,37 @@ app.on("ready", () => {
 
 app.checkForUpdates = () => {
     // console.log("Checking for updates...");
-
     // autoUpdater.checkForUpdatesAndNotify();
-
     // if (!app.isPackaged) return;
-
     // fetch("https://raw.githubusercontent.com/ZephraCloud/Apple-Music-RPC/main/covers.json", { cache: "no-store" }, function (error, meta, body) {
     //     if (!body) return console.log(`Error ${error}. Cover check was canceled.`);
     //     body = JSON.parse(body.toString());
-
     //     console.log("Checking for new covers...");
-
     //     if (!isEqual(require("../covers.json"), body)) {
     //         fs.writeFile(path.join(app.isPackaged ? process.resourcesPath + "/app.asar.unpacked" : __dirname + "/..", "/covers.json"), JSON.stringify(body, null, 4), function (err) { if (err) console.log(err) });
     //         console.log("Updated covers");
-
     //         app.showNotification("AMRPC", langString.notification.coverlistUpdated);
-
     //         setTimeout(() => {
     //             app.relaunch();
     //             app.exit();
     //         }, 1000);
     //     } else console.log("No new covers available");
     // });
-}
+};
 
 app.sendToMainWindow = (t, v) => {
-    app.mainWindow.webContents.send(t, v)
-}
+    app.mainWindow.webContents.send(t, v);
+};
 
 app.showNotification = (title, body) => {
-    new Notification({ title: title, body: body, icon: path.join(app.getAppPath(), "assets/logo.png") }).show();
-}
+    new Notification({
+        title: title,
+        body: body,
+        icon: path.join(app.getAppPath(), "assets/logo.png"),
+    }).show();
+};
 
 app.restart = () => {
     app.relaunch();
     app.exit();
-}
+};

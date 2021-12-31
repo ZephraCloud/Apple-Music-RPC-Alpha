@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld("electron", {
         },
         get: (k) => {
             return ipcRenderer.invoke("getAppData", k);
-        }
+        },
     },
     config: {
         set: (k, v) => {
@@ -30,25 +30,32 @@ contextBridge.exposeInMainWorld("electron", {
         },
         get: (k) => {
             return ipcRenderer.invoke("getConfig", k);
-        }
+        },
     },
     fetchChangelog: () => {
         return new Promise((resolve, reject) => {
-            fetch("https://api.github.com/repos/ZephraCloud/Apple-Music-RPC/releases/latest", {
-                cache: "no-store"
-            }, (error, meta, body) => {
-                if (error) return reject(error);
-                body = JSON.parse(body.toString());
+            fetch(
+                "https://api.github.com/repos/ZephraCloud/Apple-Music-RPC/releases/latest",
+                {
+                    cache: "no-store",
+                },
+                (error, meta, body) => {
+                    if (error) return reject(error);
+                    body = JSON.parse(body.toString());
 
-                resolve(body);
-            });
+                    resolve(body);
+                }
+            );
         });
     },
     updateLanguage: (lang) => ipcRenderer.invoke("updateLanguage", lang),
     openURL: (url) => {
-        if (url.startsWith("http://")) return console.log("[BROWSER PRELOAD] Didn't open URL because it's not secure.");
+        if (url.startsWith("http://"))
+            return console.log(
+                "[BROWSER PRELOAD] Didn't open URL because it's not secure."
+            );
 
-        shell.openExternal(url)
+        shell.openExternal(url);
     },
     minimize: () => ipcRenderer.invoke("windowControl", "minimize"),
     maximize: () => ipcRenderer.invoke("windowControl", "maximize"),
