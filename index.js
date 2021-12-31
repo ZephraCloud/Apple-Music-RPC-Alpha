@@ -37,9 +37,7 @@ const config = new Store({
 
 console.log = log.log;
 
-let covers = require("./covers.json"),
-    userLang = config.get("language"),
-    langString = require(`./language/${userLang}.json`);
+let langString = require(`./language/${config.get("language")}.json`);
 
 require("child_process").exec("NET SESSION", function (err, so, se) {
     if (se.length === 0) {
@@ -66,34 +64,5 @@ ipcMain.on("getCover", (e, d) => {
 });
 
 ipcMain.on("listenalong-change", (e, d) => {
-    userLang = d.lang;
-    langString = require(`./language/${userLang}.json`);
+    langString = require(`./language/${d.lang}.json`);
 });
-
-function updateUserData(ct) {
-    // if(!ct || !ct.artist || ct.name.toLowerCase() === "connecting...") return;
-
-    // let artist = userData.get(ct.artist.toLowerCase());
-
-    // if(artist) {
-    //     if(artist[ct.album.toLowerCase()][ct.name.toLowerCase()]) artist[ct.album.toLowerCase()][ct.name.toLowerCase()] = {
-    //         "lastplayed": Date.now(),
-    //         "count": artist[ct.album.toLowerCase()][ct.name.toLowerCase()].count+1
-    //     };
-    //     else artist[ct.album.toLowerCase()][ct.name.toLowerCase()] = {
-    //         "lastplayed": Date.now(),
-    //         "count": 1
-    //     };
-
-    //     userData.set(ct.artist.toLowerCase(), artist);
-    // } else {
-    //     userData.set(ct.artist.toLowerCase(), {
-    //         [ct.album.toLowerCase()]: {
-    //             [ct.name.toLowerCase()]: {
-    //                 "lastplayed": Date.now(),
-    //                 "count": 1
-    //             }
-    //         }
-    //     });
-    // }
-}

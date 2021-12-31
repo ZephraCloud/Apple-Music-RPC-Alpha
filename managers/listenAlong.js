@@ -52,7 +52,7 @@ module.exports = {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    userid: config.get("zephra.userId"),
+                    userId: config.get("zephra.userId"),
                 }),
             },
             (error, meta, body) => {
@@ -75,7 +75,7 @@ module.exports = {
                 },
                 body: JSON.stringify({
                     userId: config.get("zephra.userId"),
-                    roomid: roomId,
+                    roomId: roomId,
                 }),
             },
             (error, meta, body) => {
@@ -98,12 +98,10 @@ module.exports = {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    roomid: appData.get("listenAlong.roomId"),
+                    roomId: appData.get("listenAlong.roomId"),
                 }),
             },
             (error, meta, body) => {
-                body = JSON.parse(body);
-
                 appData.set("listenAlong", {});
             }
         );

@@ -159,6 +159,8 @@ document.querySelectorAll("div.setting select").forEach(async (select) => {
 
         if (select.name === "config_colorTheme") updateTheme();
         else if (select.name === "config_language") updateLanguage();
+
+        updateSCPM();
     });
 
     select.value = await window.electron.config.get(select.name.replace("config_", ""));
@@ -179,18 +181,27 @@ async function updateTheme() {
 
 async function updateSCPM() {
     const e = {
-        cb: document.querySelector("div.setting input[name='config_performanceMode']"),
-        cs: document.querySelector("div.setting input[name='config_show']"),
-        cp: document.querySelector("div.setting input[name='config_hideOnPause']")
+        performanceMode: document.querySelector("div.setting input[name='config_performanceMode']"),
+        showRPC: document.querySelector("div.setting input[name='config_show']"),
+        hideOnPause: document.querySelector("div.setting input[name='config_hideOnPause']"),
+        service: document.querySelector("div.setting select[name='config_service']"),
+        listenAlong: document.querySelector("div.setting input[name='config_listenAlong']"),
     };
 
-    if (e.cb.checked) {
-        if (await window.electron.config.get("show")) e.cs.disabled = true;
-        e.cp.checked = true;
-        e.cp.disabled = true;
+    if (e.performanceMode.checked) {
+        if (await window.electron.config.get("show")) e.showRPC.disabled = true;
+        e.hideOnPause.checked = true;
+        e.hideOnPause.disabled = true;
     } else {
-        if (await window.electron.config.get("show")) e.cs.disabled = false;
-        e.cp.disabled = false;
+        if (await window.electron.config.get("show")) e.showRPC.disabled = false;
+        e.hideOnPause.disabled = false;
+    }
+
+    if (e.service.value === "itunes") {
+        e.listenAlong.disabled = true;
+        e.listenAlong.checked = false;
+    } else {
+        e.listenAlong.disabled = false;
     }
 }
 
