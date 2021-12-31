@@ -149,8 +149,9 @@ div.content form .setting {
 }
 
 div.content form .setting > * {
-    display: inline-block;
-    vertical-align: middle;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 div.content .settings {
@@ -352,15 +353,15 @@ div.setting input[type="text"], div.setting select {
     border-width: 1.5px;
     border-style: solid;
     padding: 5px;
-    width: 60%;
+    width: 40%;
     float: right;
     max-width: 60%;
     max-height: 60%;
 }
 
 body[data-theme="dark"] div.setting input[type="text"], body[data-theme="dark"] div.setting select {
-    background-color: #2d2d2d;
-    border-color: #ffffff1a;
+    background-color: #1D1D1D;
+    border-color: #2d2d2d;
     color: white;
 }
 
