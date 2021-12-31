@@ -1,4 +1,4 @@
-const { app, contextBridge, ipcRenderer, shell, nativeTheme } = require("electron"),
+const { contextBridge, ipcRenderer, shell, nativeTheme } = require("electron"),
     fetch = require("fetch").fetchUrl;
 
 console.log("[BROWSER PRELOAD] Ready");
@@ -53,4 +53,6 @@ contextBridge.exposeInMainWorld("electron", {
     minimize: () => ipcRenderer.invoke("windowControl", "minimize"),
     maximize: () => ipcRenderer.invoke("windowControl", "maximize"),
     hide: () => ipcRenderer.invoke("windowControl", "hide"),
+    reload: () => ipcRenderer.invoke("windowControl", "reload"),
+    restart: () => ipcRenderer.invoke("appControl", "restart"),
 });

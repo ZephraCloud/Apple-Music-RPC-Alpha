@@ -133,7 +133,7 @@
             </svg>
             <span>Patreon</span>
         </span>
-        <span onclick="BrowserWindow.getFocusedWindow().reload()" id="reloadPage">
+        <span onclick="window.electron.reload()" id="reloadPage">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em"
                 viewBox="0 0 489.533 489.533">
                 <path
@@ -141,7 +141,7 @@
             </svg>
             <span>Reload</span>
         </span>
-        <span onclick="app.restart()" style="display: none; color: #EF4A4A" id="restartApp">
+        <span onclick="window.electron.restart()" style="display: none; color: #EF4A4A" id="restartApp">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" height="1em" width="1em"
                 viewBox="0 0 489.533 489.533">
                 <path

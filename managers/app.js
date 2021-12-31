@@ -149,6 +149,11 @@ app.on("ready", () => {
         else if (action === "close") app.mainWindow.close();
         else if (action === "minimize") app.mainWindow.minimize();
         else if (action === "maximize") app.mainWindow.maximize();
+        else if (action === "reload") app.mainWindow.reload();
+    });
+
+    ipcMain.handle("appControl", (e, action) => {
+        if (action === "restart") app?.restart();
     });
 
     app.mainWindow.hide();
