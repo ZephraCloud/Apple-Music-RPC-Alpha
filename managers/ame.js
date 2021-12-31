@@ -8,7 +8,7 @@ const requestListener = function (req, res) {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Headers", "*");
         res.writeHead(200);
-        res.end("req", req);
+        res.end("end");
 
         if (req.headers["ame-track"]) {
             req.headers["ame-log"] =
