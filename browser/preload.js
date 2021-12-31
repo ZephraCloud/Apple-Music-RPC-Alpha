@@ -1,4 +1,5 @@
-const { app, contextBridge, ipcRenderer, shell, BrowserWindow } = require("electron");
+const { app, contextBridge, ipcRenderer, shell, nativeTheme } = require("electron"),
+    fetch = require("fetch").fetchUrl;
 
 console.log("[BROWSER PRELOAD] Ready");
 
@@ -11,6 +12,9 @@ contextBridge.exposeInMainWorld("electron", {
     },
     getLangStrings: (lang) => {
         return require(`../language/${lang}.json`);
+    },
+    getSystemTheme: (lang) => {
+        return nativeTheme.shouldUseDarkColors ? "dark" : "light";
     },
     appData: {
         set: (k, v) => {
@@ -28,8 +32,24 @@ contextBridge.exposeInMainWorld("electron", {
             return ipcRenderer.invoke("getConfig", k);
         }
     },
+    fetchChangelog: () => {
+        return new Promise((resolve, reject) => {
+            fetch("https://api.github.com/repos/ZephraCloud/Apple-Music-RPC/releases/latest", {
+                cache: "no-store"
+            }, (error, meta, body) => {
+                if (error) return reject(error);
+                body = JSON.parse(body.toString());
+
+                resolve(body);
+            });
+        });
+    },
     updateLanguage: (lang) => ipcRenderer.invoke("updateLanguage", lang),
-    openURL: (url) => shell.openExternal(url),
+    openURL: (url) => {
+        if (url.startsWith("http://")) return console.log("[BROWSER PRELOAD] Didn't open URL because it's not secure.");
+
+        shell.openExternal(url)
+    },
     minimize: () => ipcRenderer.invoke("windowControl", "minimize"),
     maximize: () => ipcRenderer.invoke("windowControl", "maximize"),
     hide: () => ipcRenderer.invoke("windowControl", "hide"),

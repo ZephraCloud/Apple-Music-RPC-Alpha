@@ -1,27 +1,31 @@
-// const { ipcRenderer } = require('electron'),
-//     { BrowserWindow, nativeTheme, Notification, app } = require('@electron/remote'),
-//     Store = require("electron-store"),
-//     path = require("path"),
-//     fetch = require("fetch").fetchUrl,
-//     config = new Store({}),
-//     appData = new Store({name: "data"}),
-//     song = {
-//         name: document.querySelector("#songname"),
-//         artist: document.querySelector("#songartist"),
-//         info: document.querySelector("div.songinfo")
-//     },
-//     { logInfo, logSuccess, logError } = require("../managers/log");
-
-//  let langString = require(`../language/${config.get("language")}.json`),
-    //  ctG;
-
 let appVersion,
-    restartRequiredMemory = {};
+    restartRequiredMemory = {},
+    langString = {};
 
 (async () => {
+    const seenChangelogs = await window.electron.appData.get("changelog");
     appVersion = await window.electron.appVersion();
 
     document.querySelector("span#extra_version").textContent = `${window.electron.isDeveloper() ? "Developer" : ""} V.${appVersion}`;
+
+    if (!seenChangelogs[appVersion]) {
+        const changelog = await window.electron.fetchChangelog();
+
+        if (changelog) {
+            newModal(`Changelog ${changelog.name}`, marked.parse(changelog.body.replace("# Changelog:\r\n", "")), [
+                {
+                    text: langString.settings.modal.buttons.okay,
+                    style: "btn-grey",
+                    events: [
+                        {
+                            name: "onclick",
+                            value: "updateDataChangelog(appVersion, true), closeModal(this.parentElement.id)"
+                        }
+                    ]
+                }
+            ]);
+        }
+    }
 })();
 
 console.log("[BROWSER RENDERER] Loading...");
@@ -81,65 +85,6 @@ updateLanguage();
 //         document.querySelector("span#download-progress progress").value = o.data.percent;
 //     }
 // });
-
-// if (!appData.get("userCountUsageAsked")) {
-//     newModal(langString.settings.modal.usercount.title, langString.settings.modal.usercount.description, [
-//         {
-//             text: langString.settings.modal.buttons.yes,
-//             style: "btn-green",
-//             events: [
-//                 {
-//                     name: "onclick",
-//                     value: "sendUserCount(), appData.set('userCountUsageAsked', true), closeModal(this.parentElement.id)"
-//                 }
-//             ]
-//         },
-//         {
-//             text: langString.settings.modal.buttons.later,
-//             style: "btn-grey",
-//             events: [
-//                 {
-//                     name: "onclick",
-//                     value: "deleteModal(this.parentElement.id)"
-//                 }
-//             ]
-//         },
-//         {
-//             text: langString.settings.modal.buttons.no,
-//             style: "btn-grey",
-//             events: [
-//                 {
-//                     name: "onclick",
-//                     value: "appData.set('userCountUsageAsked', true), deleteModal(this.parentElement.id)"
-//                 }
-//             ]
-//         }
-//     ]);
-// }
-
-// if (!window.electron.appData.get("changelog")[appVersion]) {
-//     fetch("https://api.github.com/repos/N0chteil-Productions/Apple-Music-RPC/releases/latest", function(error, meta, body) {
-//         if (!body || error) return console.log(`Error ${error}. Can't get latest release.`);
-//         body = JSON.parse(body.toString());
-
-//         if (body["tag_name"].replace(/\D/g, "") === app.getVersion().replace(/\D/g, "")) {
-//             newModal(`Changelog ${body.name}`, marked(body.body.replace("# Changelog:\r\n", "")), [
-//                 {
-//                     text: langString.settings.modal.buttons.okay,
-//                     style: "btn-grey",
-//                     events: [
-//                         {
-//                             name: "onclick",
-//                             value: "updateDataChangelog(app.getVersion(), true), closeModal(this.parentElement.id)"
-//                         }
-//                     ]
-//                 }
-//             ]);
-//         } else
-//             updateDataChangelog(app.getVersion(), false);
-//     });
-    
-// }
 
 document.querySelector("span.dot.minimize")?.addEventListener("click", function (e) {
     window.electron.minimize();
@@ -227,7 +172,7 @@ function openUrl(url) {
 async function updateTheme() {
     let theme = await window.electron.config.get("colorTheme");
 
-    if (theme === "os") theme = nativeTheme.shouldUseDarkColors ? "dark" : "white";
+    if (theme === "os") theme = await window.electron.getSystemTheme();
 
     document.querySelector("body").setAttribute("data-theme", theme);
 }
@@ -364,12 +309,12 @@ function generateEleId() {
     return result;
 }
 
-function updateDataChangelog(k, v) {
-    let changelog = window.electron.appData.get("changelog");
+async function updateDataChangelog(k, v) {
+    let changelog = await window.electron.appData.get("changelog");
 
     changelog[k] = v;
 
-    appData.set("changelog", changelog);
+    window.electron.appData.set("changelog", changelog);
 }
 
 console.log("[BROWSER RENDERER] Ready");
