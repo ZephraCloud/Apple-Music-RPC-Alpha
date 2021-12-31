@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, shell, nativeTheme } = require("electron"),
+const { contextBridge, ipcRenderer, shell } = require("electron"),
     fetch = require("fetch").fetchUrl;
 
 console.log("[BROWSER PRELOAD] Ready");
@@ -13,8 +13,8 @@ contextBridge.exposeInMainWorld("electron", {
     getLangStrings: (lang) => {
         return require(`../language/${lang}.json`);
     },
-    getSystemTheme: (lang) => {
-        return nativeTheme.shouldUseDarkColors ? "dark" : "light";
+    getSystemTheme: () => {
+        return ipcRenderer.invoke("getSystemTheme", {});
     },
     appData: {
         set: (k, v) => {

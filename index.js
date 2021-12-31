@@ -1,7 +1,5 @@
 const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = require("electron"),
-    Store = require("electron-store"),
-    log = require("electron-log"),
-    { logInfo, logSuccess, logError } = require("./managers/log");
+    Store = require("electron-store");
 
 const config = new Store({
         defaults: {
@@ -11,7 +9,7 @@ const config = new Store({
             showAlbumCover: true,
             performanceMode: false,
             listenAlong: false,
-            appleMusicElectron: false,
+            service: "itunes",
             colorTheme: "white",
             language: "en_US",
             cover: "applemusic-logo",
@@ -21,21 +19,19 @@ const config = new Store({
     }),
     appData = new Store({
         name: "data", defaults: {
-            userCountUsageAsked: false,
-            nineelevenAsked: false,
+            nineElevenAsked: false,
             appleEventAsked: false,
-            nineelevenCovers: false,
+            nineElevenCovers: false,
             changelog: {},
             zephra: {
                 userId: false,
                 userAuth: false,
                 lastAuth: false
-            },
-            discordImg: []
+            }
         }
     });
 
-console.log = log.log;
+console.log = app.addLog;
 
 let langString = require(`./language/${config.get("language")}.json`);
 
@@ -51,18 +47,3 @@ require("child_process").exec("NET SESSION", function (err, so, se) {
 require("./managers/app.js");
 require("./managers/discord.js");
 require(`./managers/${config.get("service")}.js`);
-
-ipcMain.on("getCover", (e, d) => {
-    if (!app.discord.currentTrack) return;
-
-    app.sendToMainWindow("asynchronous-message", {
-        "type": "sendCover",
-        "data": {
-            "element": app.discord.presenceData.largeImageKey
-        }
-    });
-});
-
-ipcMain.on("listenalong-change", (e, d) => {
-    langString = require(`./language/${d.lang}.json`);
-});

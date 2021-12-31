@@ -106,6 +106,8 @@ module.exports = {
 
         module.exports.getAppleMusicData(currentTrack.name, currentTrack.artist, function (res, err) {
             if (!err) {
+                currentTrack.url = res.url;
+
                 app.discord.presenceData.buttons = [
                     {
                         label: "Play on Apple Music",
@@ -127,13 +129,15 @@ module.exports = {
         if (!app.discord.disconnected && app.discord.client) {
             app.discord.client.setActivity(app.discord.presenceData);
 
-            if (app.discord.timeout) clearTimeout(app.discord.timeout);
+            if (appType === "ame") {
+                if (app.discord.timeout) clearTimeout(app.discord.timeout);
 
-            app.discord.timeout = setTimeout(() => {
+                app.discord.timeout = setTimeout(() => {
                     const dif = new Date(app.discord.presenceData.endTimestamp).getTime() - new Date().getTime();
 
                     if (dif <= 0) module.exports.clearActivity();
                 }, new Date(app.discord.presenceData.endTimestamp).getTime() - new Date().getTime() + 1000);
+            }
 
             setTimeout(() => {
                 if (!app.discord.disconnected && app.discord.client) app.discord.client.setActivity(app.discord.presenceData);
@@ -144,12 +148,10 @@ module.exports = {
     clearActivity: (remove=true, log=true) => {
         if (log) console.log("[DiscordRPC] Clear Activity");
 
-        if (!app.discord.presenceData.details && !app.discord.presenceData.state && !app.discord.presenceData.endTimestamp) return;
-
         if (remove) {
-            delete app.discord.presenceData.details;
-            delete app.discord.presenceData.state;
-            delete app.discord.presenceData.endTimestamp;
+            delete app.discord.presenceData?.details;
+            delete app.discord.presenceData?.state;
+            delete app.discord.presenceData?.endTimestamp;
             delete app.discord.currentTrack;
         }
 

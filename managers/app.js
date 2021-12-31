@@ -1,4 +1,4 @@
-const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = require("electron"),
+const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog, nativeTheme } = require("electron"),
     Store = require("electron-store"),
     config = new Store({}),
     appData = new Store({name: "data"}),
@@ -7,11 +7,14 @@ const { ipcMain, app, Menu, Notification, Tray, BrowserWindow, dialog } = requir
     AutoLaunch = require("auto-launch"),
     fetch = require("fetch").fetchUrl,
     fs = require("fs"),
+    log = require("electron-log"),
     { connect } = require("../managers/discord.js");
 
 let langString = require(`../language/${config.get("language")}.json`);
 
 app.dev = (app.isPackaged) ? false : true;
+app.addLog = log.log;
+console.log = app.addLog;
 
 app.on("ready", () => {
     console.log("[APP] Starting...");
@@ -123,6 +126,10 @@ app.on("ready", () => {
 
     ipcMain.handle("isDeveloper", () => {
         return app.dev;
+    });
+
+    ipcMain.handle("getSystemTheme", (e, k) => {
+        return nativeTheme.shouldUseDarkColors ? "dark" : "light";
     });
 
     ipcMain.handle("getConfig", (e, k) => {

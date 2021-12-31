@@ -1,8 +1,11 @@
-const Store = require("electron-store"),
+const { app } = require("electron"),
+    Store = require("electron-store"),
     config = new Store({}),
     appData = new Store({ name: "data" }),
     http = require("http"),
     fetch = require("fetch").fetchUrl;
+
+console.log = app.addLog;
 
 const requestListener = function (req, res) {
         res.setHeader("Access-Control-Allow-Origin", "api.zephra.cloud");
