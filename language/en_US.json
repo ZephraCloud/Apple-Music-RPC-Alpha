@@ -19,7 +19,7 @@
             "autolaunch": "Autolaunch",
             "show": "Show Presence",
             "hideOnPause": "Hide Presence on pause",
-            "showAlbumCover": "Show artwork of the album",
+            "showAlbumArtwork": "Show artwork of the album",
             "performanceMode": "Performance Mode",
             "colorTheme": "Preferred color theme",
             "language": "App language",
